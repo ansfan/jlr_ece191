@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Welcome to KastNow</title>
+	<link rel="stylesheet" type="text/css" href="css/login.css">
+</head>
+<body data-vide-bg="video/LoginVideo" data-vide-options="position: 60% 0%">
+	<div id="outer-wrapper">
+		<main>
+			<div class="container">
+				<h1>Welcome to KastNow.</h1>
+				{% with messages = get_flashed_messages() %}
+				{% if messages %}
+				<ul>
+					{% for message in messages %}
+					<br>{{ message }}
+					{% endfor %}
+				</ul>
+				{% endif %}
+				{% endwith %}
+				<br>
+				<p class="comingsoon">
+					Coming Soon. For inquiries, email us at <a href="mailto:contact@kastnow.com">contact@kastnow.com</a>.
+				</p>
+	<!-- Sign in:<br>
+	<a href = "/authhandler/loginFB">Facebook</a>
+	&nbsp;<a href = "/authhandler/loginGoogle">Google</a> -->
+</div>
+</main>
+<footer>
+	<div class="container">
+		<p class="notice">
+			We are currently actively developing <a href="http://www.kasteye.com">KastEye</a>, a service to assist the blind via live streaming. Come <a href="http://www.kasteye.com">check it out!</a>
+		</p>
+		<p>
+			Kast Inc.
+		</p>
+	</div>
+</footer>
+</div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/jquery.vide.min.js"></script>
+
+<!-- Overcoming IE8 HTML5 Video tag -->
+<!--[if lt IE 9]>
+<script>
+document.createElement('video');
+</script>
+<![endif]-->
+<script type="text/javascript">
+	// console.log($(window).width());
+</script>
+
+</body>
+</html>

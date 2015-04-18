@@ -1,0 +1,13 @@
+boto==2.32.1
+flask-restful-swagger==0.14
+oauth==1.0.1
+oauth2==1.5.211
+virtualenv==1.11.6
+Flask==0.10.1
+Flask-Login==0.2.11
+Flask-OAuth==0.12
+Flask-RESTful==0.2.12
+Jinja2==2.7.3
+Werkzeug==0.9.6
+requests==2.4.0
+websocket-client==0.17.0
