@@ -1,0 +1,13 @@
+#!/Users/Abel/Documents/UCSD/ECE191/sample/gevent-socketio/examples/django_chat/myvenv/bin/python
+
+import sys
+sys.path[0:0] = [
+  '/Users/Abel/Documents/UCSD/ECE191/sample/gevent-socketio/examples/django_chat/eggs/mr.developer-1.31-py2.7.egg',
+  '/Users/Abel/Documents/UCSD/ECE191/sample/gevent-socketio/examples/django_chat/eggs/zc.buildout-2.3.1-py2.7.egg',
+  '/Users/Abel/Documents/UCSD/ECE191/sample/gevent-socketio/examples/django_chat/myvenv/lib/python2.7/site-packages',
+  ]
+
+import mr.developer.develop
+
+if __name__ == '__main__':
+    sys.exit(mr.developer.develop.develop())
