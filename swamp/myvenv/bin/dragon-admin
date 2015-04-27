@@ -1,0 +1,10 @@
+#!/Users/Abel/Documents/UCSD/ECE191/swamp/myvenv/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'SwampDragon==0.4.1.2','console_scripts','dragon-admin'
+__requires__ = 'SwampDragon==0.4.1.2'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('SwampDragon==0.4.1.2', 'console_scripts', 'dragon-admin')()
+    )
