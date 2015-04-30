@@ -2,7 +2,6 @@ from tornado.ioloop import PeriodicCallback
 from swampdragon.pubsub_providers.data_publisher import publish_data
 import psutil
 
-
 pcb = None
 
 def broadcast_sys_info():
@@ -17,8 +16,14 @@ def broadcast_sys_info():
     bytes_sent = '{0:.2f} kb'.format(net.bytes_recv / 1024)
     bytes_rcvd = '{0:.2f} kb'.format(net.bytes_sent / 1024)
 
-    publish_data('sysinfo', {
-        'cpu': cpu,
+    publish_data('sysinfo_sent', {
         'kb_received': bytes_sent,
+    })
+
+    publish_data('sysinfo_rec', {
         'kb_sent': bytes_rcvd,
+    })
+
+    publish_data('sysinfo_cpu', {
+        'cpu': cpu,
     })
