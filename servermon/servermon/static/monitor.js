@@ -18,8 +18,7 @@ swampdragon.onChannelMessage(function (channels, message) {
 	}
 });
 
-
-swampdragon.ready(function() {
+swampdragon.open(function() {
     swampdragon.subscribe('sys', 'sysinfo_sent', null);
     swampdragon.subscribe('sys', 'sysinfo_rec', null);
     swampdragon.subscribe('sys', 'sysinfo_cpu', null);
