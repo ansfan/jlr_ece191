@@ -9,8 +9,9 @@ curl --data "source=http://127.0.0.1:8081/webhook/&car_name=ram" http://127.0.0.
 4. Celery will be reading on redis at path /0/ and detect each request and send the data. 
 
 ### To Run
-1. python app.py
-2. redis-server
-3. celery worker -A app.celery --loglevel=debug
-4. python client.py
-5. curl --data "source=http://127.0.0.1:8081/webhook/&car_name=ram" http://127.0.0.1:8080/webhook/
+1. pip install flash && pip install requests
+2. python app.py
+3. redis-server
+4. celery worker -A app.celery --loglevel=debug
+5. python client.py
+6. curl --data "source=http://127.0.0.1:8081/webhook/&car_name=ram" http://127.0.0.1:8080/webhook/
