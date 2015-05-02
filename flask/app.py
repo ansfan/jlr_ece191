@@ -2,6 +2,7 @@ from flask import Flask, url_for, jsonify, request
 import time
 import requests
 from celery import Celery
+import json
 
 app = Flask(__name__)
 app.debug = True
@@ -23,21 +24,16 @@ def jsonifyCSData(data):
 
 # Import data
 testdata = []
-with open('../cabspottingdata/new_abboip.txt') as inputfile:
+with open('../cabspottingdata/new_abboip2.txt') as inputfile:
 	for line in inputfile:
 		testdata.append(jsonifyCSData(line))
 
 # Celery tasks
 @celery.task(bind=True)
-def send_cab_data(self, dest, name):
+def send_cab_data(self, dest, payload):
 	with app.app_context():
-		for items in testdata:
-			payload = {
-				'data' : items,
-				'car_name' : name
-			}
-			r = requests.post(dest, params=payload)
-			time.sleep(100)
+		headers = {'Content-Type': 'application/json'}
+		r = requests.post(dest, data=json.dumps(payload), headers=headers)
 	return True
 
 @app.route('/')
@@ -55,8 +51,17 @@ def webhook():
 
 		response_address = data['source']
 		response_attr = data['car_name']
-		
-		task = send_cab_data.delay(response_address, response_attr)
+
+		print "Sending data to: " + response_address
+		print "With data type: " + response_attr
+
+		for items in testdata:
+			payload = {
+				'data' : items,
+				'car_name' : response_attr
+			}
+			task = send_cab_data.apply_async(args=[response_address, payload])
+
 		if task:
 			print "Sent complete."
 	return "OK\n"
