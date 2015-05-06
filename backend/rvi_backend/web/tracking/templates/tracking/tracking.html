@@ -1,0 +1,86 @@
+{% load staticfiles %}
+{% load leaflet_tags %}
+{% load geojson_tags %}
+
+{% block extra_assets %}
+    {% leaflet_js %}
+    {% leaflet_css %}
+{% endblock %}
+
+
+{% block map_style %}
+    <style>
+        .leaflet-container {  /* all maps */
+            width:  100%;
+            height: 100%;
+         }
+    </style>
+{% endblock %}
+
+{% block map_view %}
+        
+    <script src="{% static 'tracking/js/tracking.js' %}"></script>
+
+    <script type="text/javascript">
+        var waypoints = {{ waypoints|geojsonfeature:"vehicle_info"|safe }};
+
+        // event handlers for waypoints
+        function onWaypointClick(e) {
+            var feature = e.target.feature;
+            var i = getNearest(feature.geometry.coordinates, [e.latlng.lng, e.latlng.lat]);
+            var popup = L.popup()
+                 .setLatLng(e.latlng)
+                 .setContent(formatPopupContent(feature.properties.vehicle_info, feature.geometry.coordinates[i]));
+            e.target._map.openPopup(popup);
+        }
+        function onEachFeature(feature, layer) {
+            layer.on('click', onWaypointClick);
+        }
+
+        function main_map_init(map, options) {
+
+            // place makers
+            var features = waypoints.features;
+            for (i = 0; i < features.length; i++) {
+                var track = features[i].geometry.coordinates;
+                var veh_info = features[i].properties.vehicle_info;
+                if (track.length > 0) {
+                    // start marker
+                    var marker = L.marker(L.latLng(track[0][1], track[0][0]), {
+                        title: "Start Location"
+                    });
+                    marker.bindPopup(formatPopupContent(veh_info, track[0]));
+                    marker.addTo(map);
+                    // end marker
+                    var marker = L.marker(L.latLng(track[track.length-1][1], track[track.length-1][0]), {
+                        title: "End Location"
+                    });
+                    marker.bindPopup(formatPopupContent(veh_info, track[track.length-1]));
+                    marker.addTo(map);                            
+                }
+            }
+                    
+            // waypoints line style
+            var lineStyle = {
+                "color": "Red",
+                "weight": 5,
+                "opacity": 0.65
+            };
+                    
+            // create waypoints
+            var tracks = L.geoJson(waypoints, {
+                style: lineStyle,
+                onEachFeature: onEachFeature
+            });
+
+            // set map viewport
+            var group = new L.featureGroup([tracks]);
+            map.fitBounds(group.getBounds());
+            tracks.addTo(map);
+                    
+        }
+    </script>
+            
+    {% leaflet_map "main" callback="main_map_init" %}
+
+{% endblock %}
