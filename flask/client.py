@@ -1,7 +1,41 @@
-from flask import Flask, url_for, jsonify, request
+from flask import Flask, url_for, jsonify, request, render_template
+from flask.ext.socketio import SocketIO, emit
 
-app = Flask(__name__)
+########################
+# Flask Initialization #
+########################
+app = Flask(__name__, static_url_path='')
+app.config['SECRET_KEY'] = 'secret!'
 app.debug = True
+socketio = SocketIO(app)
+
+######################
+# SocketIO Functions #
+######################
+@socketio.on('my event', namespace='/test')
+def test_message(message):
+	print message['data']
+	emit('my response', {'data': message['data']})
+
+@socketio.on('my broadcast event', namespace='/test')
+def test_message2(message):
+	print message['data']
+	emit('my response', {'data': message['data']}, broadcast=True)
+
+@socketio.on('connect', namespace='/test')
+def test_connect():
+	emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+	print('Client disconnected')
+
+###################
+# Flask Functions #
+###################
+@app.route('/')
+def index():
+	return render_template('index.html')
 
 @app.route('/webhook/', methods=['POST'])
 def webhook():
@@ -15,4 +49,4 @@ def webhook():
 	return "OK"
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=8081)
+	socketio.run(app)
