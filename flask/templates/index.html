@@ -4,8 +4,8 @@
 </head>
 <body>
 	<h1 id="broadcast_data">Testdata</h1>
-	<form id="emit">
-		<input id="emit_data" type="text">
+	<form id="emit" method="post">
+		<input id="emit_data" name="car_name" type="text">
 		<input type="submit" value="Submit dis">
 	</form>
 	<div id="log">
@@ -17,12 +17,13 @@
 	<script type="text/javascript" charset="utf-8">
 	$(document).ready(function(){
 
-		var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+		var socket = io.connect('http://' + document.domain + ':' + location.port + '/car');
 
 		socket.on('my response', function(msg) {
 			console.log(msg['data']['data'])
 			if (msg['data']['data']) {
-				var temp_data = {}
+				var temp_data = {};
+				temp_data['car_name'] = msg['data']['car_name'];
 				temp_data['lat'] = msg['data']['data']['lat'];
 				temp_data['long'] = msg['data']['data']['long'];
 				temp_data['occ'] = msg['data']['data']['occ'];
@@ -37,7 +38,7 @@
 		});
 
 		$('form#emit').submit(function(event) {
-			socket.emit('my event', {data: $('#emit_data').val()});
+			socket.emit('car request', {data: $('#emit_data').val()});
 			return false;
 		});
 		// $('form#broadcast').submit(function(event) {

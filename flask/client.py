@@ -1,39 +1,54 @@
 from flask import Flask, url_for, jsonify, request, render_template
 from flask.ext.socketio import SocketIO, emit
+import requests
+import json 
 
 ########################
 # Flask Initialization #
 ########################
 app = Flask(__name__, static_url_path='')
-app.config['SECRET_KEY'] = 'secret!'
 app.debug = True
 socketio = SocketIO(app)
 
+############
+# Settings #
+############
+app.config['SECRET_KEY'] = 'secret!'
+app.config['DATABASE_WEBHOOK_URL'] = 'http://127.0.0.1:8080/webhook/'
+app.config['MY_WEBHOOK_URL'] = 'http://127.0.0.1:5000/webhook/'
 ######################
 # SocketIO Functions #
 ######################
-@socketio.on('my event', namespace='/test')
+@socketio.on('car request', namespace='/car')
 def test_message(message):
-	print message['data']
-	emit('my response', {'data': message['data']})
+	car_name =  message['data']
 
-@socketio.on('my broadcast event', namespace='/test')
-def test_message2(message):
-	print message['data']
-	emit('my response', {'data': message['data']}, broadcast=True)
+	headers = {'Content-Type': 'application/json'}
+	payload = {
+		'source' : app.config['MY_WEBHOOK_URL'],
+		'car_name' : car_name
+	}
+	r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
+	print r
+	emit('my response', {'data': car_name + ' requested'})
 
-@socketio.on('connect', namespace='/test')
+# @socketio.on('my broadcast event', namespace='/test')
+# def test_message2(message):
+# 	print message['data']
+# 	emit('my response', {'data': message['data']}, broadcast=True)
+
+@socketio.on('connect', namespace='/car')
 def test_connect():
 	emit('my response', {'data': 'Connected'})
 
-@socketio.on('disconnect', namespace='/test')
+@socketio.on('disconnect', namespace='/car')
 def test_disconnect():
-	print('Client disconnected')
+	print 'Client disconnected'
 
-###################
-# Flask Functions #
-###################
-@app.route('/')
+#################
+# Flask Routing #
+#################
+@app.route('/', methods=['GET'])
 def index():
 	return render_template('index.html')
 
@@ -45,7 +60,7 @@ def webhook():
 		data = request.get_json()
 
 		print "Data: " + str(data)
-		socketio.emit('my response', {'data': data}, namespace='/test')
+		socketio.emit('my response', {'data': data}, namespace='/car')
 
 	return "OK"
 

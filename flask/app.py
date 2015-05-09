@@ -4,14 +4,9 @@ import requests
 from celery import Celery
 import json
 
-app = Flask(__name__)
-app.debug = True
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
-
+##########################
+# Self-Defined Functions #
+##########################
 def jsonifyCSData(data):
 	data_splitted = data.split(" ")
 	result = {
@@ -28,7 +23,24 @@ with open('../cabspottingdata/new_abboip2.txt') as inputfile:
 	for line in inputfile:
 		testdata.append(jsonifyCSData(line))
 
-# Celery tasks
+########################
+# Flask Initialization #
+########################
+app = Flask(__name__)
+app.debug = True
+
+############
+# Settings #
+############
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+####################
+# Celery Functions #
+####################
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
 @celery.task(bind=True)
 def send_cab_data(self, dest, payload):
 	with app.app_context():
@@ -36,8 +48,11 @@ def send_cab_data(self, dest, payload):
 		r = requests.post(dest, data=json.dumps(payload), headers=headers)
 	return True
 
+#################
+# Flask Routing #
+#################
 @app.route('/')
-def api_root():
+def index():
 	return 'Welcome'
 
 @app.route('/webhook/', methods=['POST'])
@@ -45,10 +60,12 @@ def webhook():
 	if request.method == 'POST':
 		# avail_count['key1'] = request.remote_addr
 		print "Received connection from " + request.remote_addr
-		data = request.form
+		
+		data = request.get_json()
 
 		# implement error catcher http://flask.pocoo.org/docs/0.10/patterns/apierrors/
-
+		# print data['source']
+		# print data['car_name']
 		response_address = data['source']
 		response_attr = data['car_name']
 
@@ -64,11 +81,8 @@ def webhook():
 
 		if task:
 			print "Sent complete."
-	return "OK\n"
 
-@app.route('/avail')
-def avail():
-	return jsonify(avail_count)
+	return "OK\n"
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8080)
