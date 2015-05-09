@@ -45,6 +45,7 @@ def webhook():
 		data = request.get_json()
 
 		print "Data: " + str(data)
+		socketio.emit('my response', {'data': data}, namespace='/test')
 
 	return "OK"
 

@@ -18,9 +18,22 @@
 	$(document).ready(function(){
 
 		var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-		
+
 		socket.on('my response', function(msg) {
-			$('#log').append('<p>Received: ' + msg.data + '</p>');
+			console.log(msg['data']['data'])
+			if (msg['data']['data']) {
+				var temp_data = {}
+				temp_data['lat'] = msg['data']['data']['lat'];
+				temp_data['long'] = msg['data']['data']['long'];
+				temp_data['occ'] = msg['data']['data']['occ'];
+				temp_data['time'] = msg['data']['data']['time'];
+
+				data = JSON.stringify(temp_data);
+			} else {
+				data = msg.data
+			}
+
+			$('#log').append('<p>Received: ' + data + '</p>');
 		});
 
 		$('form#emit').submit(function(event) {
