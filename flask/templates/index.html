@@ -11,23 +11,26 @@
 	<div id="log">
 	</div>
 
-	
+
 	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="js/socketio.min.js"></script>
 	<script type="text/javascript" charset="utf-8">
 	$(document).ready(function(){
+
 		var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+		
 		socket.on('my response', function(msg) {
 			$('#log').append('<p>Received: ' + msg.data + '</p>');
 		});
+
 		$('form#emit').submit(function(event) {
 			socket.emit('my event', {data: $('#emit_data').val()});
 			return false;
 		});
-		$('form#broadcast').submit(function(event) {
-			socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
-			return false;
-		});
+		// $('form#broadcast').submit(function(event) {
+		// 	socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+		// 	return false;
+		// });
 	});
 	</script>
 
