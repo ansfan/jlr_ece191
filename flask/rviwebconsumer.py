@@ -28,15 +28,15 @@ class RVIConsumer(threading.Thread):
                 if(payload['vin'] == self.vin):
                     self.sleep_count = 0 
                     payloadtoweb = json.dumps(m.message.value)
-                    try:
-                        requests.post(self.web_url, data=payloadtoweb, headers=self.headers) 
-                        print m.message.value + "sent successfully\n"        
-                    except: 
-                        print "% is not available...shutting down now..."
+                    r = requests.post(self.web_url, data=payloadtoweb, headers=self.headers) 
+                    if (r.status_code is 200):
+                        print m.message.value + " sent successfully\n"        
+                    else: 
+                        print "%s is not available, status code:%d...shutting down now..."%(self.web_url,r.status_code)
                         self.shutdown()       
 
             else:
-                if (self.sleep_count > 50000):
+                if (self.sleep_count > 100000):
                     print "No new data for %s... Timing out" % self.vin
                     self.shutdown()
 
