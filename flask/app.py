@@ -40,6 +40,8 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 ################
 from rviwebconsumer import RVIConsumer
 
+rvi_thread_pool = {}
+
 ####################
 # Celery Functions #
 ####################
@@ -75,11 +77,24 @@ def webhook():
 		response_attr = data['car_name']
 
 		if response_attr:
-			print "Sending data to: " + response_address
-			print "With data type: " + response_attr
+			response = response_attr.split(' ')
 
-			vin1 = RVIConsumer('172.31.42.145:6667', 'rvi', response_attr, 'http://52.24.215.226/webhook/')
-			vin1.start()
+			try:
+				if (response[1] == 'end'):
+					try:
+						rvi_thread_pool[response[0]].shutdown()
+					except KeyError:
+						print "Unable to find thread for car: " + response[0]
+
+			except IndexError:
+				print "Sending data to: " + response_address
+				print "With data type: " + response[0]
+
+				vin1 = RVIConsumer('172.31.42.145:6667', 'rvi', response[0], 'http://52.24.215.226/webhook/')
+				vin1.start()
+
+				rvi_thread_pool[response[0]] = vin1
+
 		# for items in testdata:
 		# 	payload = {
 		# 		'data' : items,
