@@ -15,7 +15,8 @@ class RVIConsumer(threading.Thread):
         self.sleep_count = 0
         self.cons = SimpleConsumer(self.kafka, None, topic)
         self.cons.seek(0,2)
-        
+        self.headers = {'Content-Type' : 'application/json'}
+
     def run(self):
         while self.flag:
             
@@ -28,8 +29,7 @@ class RVIConsumer(threading.Thread):
                     self.sleep_count = 0 
                     payloadtoweb = json.dumps(m.message.value)
                     try:
-                        headers = {'Content-Type' : 'application/json'}
-                        requests.post(self.web_url, data=payloadtoweb, headers=headers) 
+                        requests.post(self.web_url, data=payloadtoweb, headers=self.headers) 
                         print m.message.value + "sent successfully\n"        
                     except: 
                         print "% is not available...shutting down now..."
@@ -44,6 +44,7 @@ class RVIConsumer(threading.Thread):
                 self.sleep_count = self.sleep_count + 1
 
     def shutdown(self):
-        self.flag = False     
+        self.flag = False    
+        requests.post(self.web_url, data=json.dumps({'vin':self.vin, 'data':'EOM'}), headers=self.headers) 
         print "%s consumer thread shutting down" % self.vin 
  
