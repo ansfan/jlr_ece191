@@ -1,0 +1,52 @@
+<html>
+<head>
+	<title>Abel</title>
+</head>
+<body>
+	<h1 id="broadcast_data">Testdata</h1>
+	<form id="emit" method="post">
+		<input id="emit_data" name="car_name" type="text">
+		<input type="submit" value="Submit dis">
+	</form>
+	<div id="log">
+	</div>
+
+
+	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="js/socketio.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	$(document).ready(function(){
+
+		var socket = io.connect('http://' + document.domain + ':' + location.port + '/car');
+
+		socket.on('my response', function(msg) {
+			console.log(msg['data']['data'])
+			if (msg['data']['data']) {
+				var temp_data = {};
+				temp_data['car_name'] = msg['data']['car_name'];
+				temp_data['lat'] = msg['data']['data']['lat'];
+				temp_data['long'] = msg['data']['data']['long'];
+				temp_data['occ'] = msg['data']['data']['occ'];
+				temp_data['time'] = msg['data']['data']['time'];
+
+				data = JSON.stringify(temp_data);
+			} else {
+				data = msg.data
+			}
+
+			$('#log').append('<p>Received: ' + data + '</p>');
+		});
+
+		$('form#emit').submit(function(event) {
+			socket.emit('car request', {data: $('#emit_data').val()});
+			return false;
+		});
+		// $('form#broadcast').submit(function(event) {
+		// 	socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+		// 	return false;
+		// });
+	});
+	</script>
+
+</body>
+</html>
