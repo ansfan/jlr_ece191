@@ -10,12 +10,13 @@ app = Flask(__name__, static_url_path='')
 app.debug = True
 socketio = SocketIO(app)
 
-############
-# Settings #
-############
+##################
+# Flask Settings #
+##################
 app.config['SECRET_KEY'] = 'secret!'
 app.config['DATABASE_WEBHOOK_URL'] = 'http://127.0.0.1:8080/webhook/'
 app.config['MY_WEBHOOK_URL'] = 'http://127.0.0.1:5000/webhook/'
+
 ######################
 # SocketIO Functions #
 ######################
@@ -28,8 +29,10 @@ def test_message(message):
 		'source' : app.config['MY_WEBHOOK_URL'],
 		'car_name' : car_name
 	}
+
 	r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
 	print r
+
 	emit('my response', {'data': car_name + ' requested'})
 
 # @socketio.on('my broadcast event', namespace='/test')

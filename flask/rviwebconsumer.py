@@ -5,10 +5,11 @@ import requests
 
 class RVIConsumer(threading.Thread):
 
-    def __init__(self, kafka_addr, topic, vin):
+    def __init__(self, kafka_addr, topic, vin, web_url):
         threading.Thread.__init__(self)
         self.kafka = KafkaClient('172.31.42.145:6667') #kafka_addr
         self.vin = vin
+        self.web_url = web_url 
         self.flag = True
         self.count = 0
         self.sleep_count = 0
@@ -27,7 +28,8 @@ class RVIConsumer(threading.Thread):
                     self.sleep_count = 0 
                     payloadtoweb = json.dumps(m.message.value)
                     try:
-                        requests.post('http://52.24.215.226/webhook/', data = payloadtoweb, headers={'Content-Type':'application/json'}) 
+                        headers = {'Content-Type' : 'application/json'}
+                        requests.post(self.web_url, data=payloadtoweb, headers=headers) 
                         print m.message.value + "sent successfully\n"        
                     except: 
                         print "% is not available...shutting down now..."
