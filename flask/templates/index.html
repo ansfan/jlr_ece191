@@ -1,6 +1,12 @@
 <html>
 <head>
 	<title>Abel</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+	<style>
+	  #map { width: 1000px; height: 400px; }
+	</style>
 </head>
 <body>
 	<h1 id="broadcast_data">Testdata</h1>
@@ -8,19 +14,47 @@
 		<input id="emit_data" name="car_name" type="text">
 		<input type="submit" value="Submit dis">
 	</form>
-	<div id="log">
-	</div>
-
+	
+	<div id='map'></div>
+	<div id="log"></div>
 
 	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="js/socketio.min.js"></script>
 	<script type="text/javascript" charset="utf-8">
+		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
+		var map = L.mapbox.map('map', 'mapbox.streets')
+			.setView([37, -122], 10);
+
+		// Add a new line to the map with no points.
+		var polyline = L.polyline([]).addTo(map);
+
+		// Keep a tally of how many points we've added to the map.
+		var pointsAdded = 0;
+
+		// Start drawing the polyline.
+		 // add();
+
+		function point_add(car_lat, car_long) {
+
+			// `addLatLng` takes a new latLng coordinate and puts it at the end of the
+			// line. You optionally pull points from your data or generate them. Here
+			// we make a sine wave with some math.
+			polyline.addLatLng(
+				L.latLng(car_lat, car_long));
+
+			// Pan the map along with where the line is being added.
+			map.setView([car_lat, car_long], 10);
+
+			// Continue to draw and pan the map by calling `add()`
+			// until `pointsAdded` reaches 360.
+			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
+		}
 	$(document).ready(function(){
 
 		var socket = io.connect('http://' + document.domain + ':' + location.port + '/car');
 
 		socket.on('my response', function(msg) {
-			console.log(msg['data']['data'])
+			console.log(msg['data']['data']);
 			if (msg['data']['data']) {
 				var temp_data = {};
 				temp_data['car_name'] = msg['data']['car_name'];
@@ -30,11 +64,25 @@
 				temp_data['time'] = msg['data']['data']['time'];
 
 				data = JSON.stringify(temp_data);
+				// console.log('lat: ' + temp_data['lat']);
+
+				// var result = {
+				// 	'type': 'Feature',
+				// 	"geometry": {
+				// 	  'type': 'Point',
+				// 	  'coordinates': [temp_data['lat'],temp_data['long']]
+				// 	},
+				// 	'properties':{}
+				// }
+
+				// console.log('res: ' + JSON.stringify(result));
+
+				point_add(temp_data['lat'], temp_data['long']);	
 			} else {
 				data = msg.data
 			}
 
-			$('#log').append('<p>Received: ' + data + '</p>');
+			$('#log').append('<p>' + data + '</p>');
 		});
 
 		$('form#emit').submit(function(event) {
