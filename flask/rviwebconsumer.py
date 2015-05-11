@@ -7,13 +7,13 @@ class RVIConsumer(threading.Thread):
 
     def __init__(self, kafka_addr, topic, vin, web_url):
         threading.Thread.__init__(self)
-        self.kafka = KafkaClient('172.31.42.145:6667') #kafka_addr
+        self.kafka = KafkaClient(kafka_addr) #kafka_addr
         self.vin = vin
         self.web_url = web_url 
         self.flag = True
         self.count = 0
         self.sleep_count = 0
-        self.cons = SimpleConsumer(self.kafka, None, 'rvi')
+        self.cons = SimpleConsumer(self.kafka, None, topic)
         self.cons.seek(0,2)
         
     def run(self):
@@ -36,7 +36,7 @@ class RVIConsumer(threading.Thread):
                         self.shutdown()       
 
             else:
-                if (self.sleep_count > 10000):
+                if (self.sleep_count > 50000):
                     print "No new data for %s... Timing out" % self.vin
                     self.shutdown()
 
