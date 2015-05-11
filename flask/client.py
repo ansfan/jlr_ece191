@@ -14,8 +14,8 @@ socketio = SocketIO(app)
 # Flask Settings #
 ##################
 app.config['SECRET_KEY'] = 'secret!'
-app.config['DATABASE_WEBHOOK_URL'] = 'http://127.0.0.1:8080/webhook/'
-app.config['MY_WEBHOOK_URL'] = 'http://127.0.0.1:5000/webhook/'
+app.config['DATABASE_WEBHOOK_URL'] = 'http://52.10.249.147:8123/webhook/'
+app.config['MY_WEBHOOK_URL'] = 'http://52.24.215.226/webhook/'
 
 ######################
 # SocketIO Functions #
