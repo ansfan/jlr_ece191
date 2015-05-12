@@ -8,12 +8,14 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<script type="text/javascript" src="../static/js/jquery-1.11.3.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="../static/FontAwesome/css/font-awesome.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="../static/FontAwesome/css/font-awesome.min.css"> -->
+
 	<link rel="stylesheet" type="text/css" href="../static/css/styles.css">
 
 	<style>
-	  #map { width: 1000px; height: 400px; }
+	  #map { width: 1000px; height: 600px; }
 	</style>
+
 </head>
 
 <body>
@@ -27,7 +29,8 @@
         		<span class="icon-bar"></span> 
       			</button>
       	<a class = "navbar-brand" href="#">
-        <i class = "fa fa-globe fa-globe-custom"></i>
+        <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+
       	</a>
     		</div>
 
@@ -55,14 +58,24 @@
 	</nav>
 <!-- End of Navigation Bar -->
 
-	<h1 id="broadcast_data">Location Tracking</h1>
-	<form id="emit" method="post">
-		<input id="emit_data" name="car_name" type="text">
-		<input type="submit" value="Submit dis">
-	</form>
-	
-	<div id='map'></div>
-	<div id="log"></div>
+	<div class = "container">
+		<p></p>
+			<div class = "row">
+				<div class = "col-xs-1 col-sm-1"></div>
+				<div class = "col-xs-10 col-sm-10">
+					<div id='map'></div>
+					<div id="log"></div>
+
+					<p></p>
+					<form id="emit" method="post">
+						<input id="emit_data" name="car_name" type="text" placeholder=" Enter Location">
+						<input type="submit" value="Submit">
+					</form>
+				</div>
+				<div class = "col-xs-1 col-sm-1"></div>
+			</div>
+
+	</div>
 
 	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="js/socketio.min.js"></script>
