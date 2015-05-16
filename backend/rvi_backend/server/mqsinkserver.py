@@ -40,7 +40,6 @@ class MQSinkServer(threading.Thread):
         threading.Thread.__init__(self)
         self.callback_url = callback_url
         url = urlparse(self.callback_url)
-        logger.info('%s | %s | %s | %s', self.callback_url, url, url.hostname, url.port)  
         self.localServer = RVIJSONRPCServer(addr=((url.hostname, url.port)), logRequests=False)
         self.register_services()
         
@@ -83,7 +82,7 @@ def report(timestamp, vin, data):
                 
         producer = SimpleProducer(kafka)
         producer.send_messages(conf['TRACKING_MQ_TOPIC'], json.dumps(payload))
-        
+
         logger.info("%s: Report data published to message queue.", conf['TRACKING_MQ_URL'])
         return True
 
