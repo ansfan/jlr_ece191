@@ -2,6 +2,7 @@ from flask import Flask, url_for, jsonify, request, render_template
 from flask.ext.socketio import SocketIO, emit
 import requests
 import json 
+import settings_client as settings
 
 ########################
 # Flask Initialization #
@@ -10,12 +11,16 @@ app = Flask(__name__, static_url_path='')
 app.debug = True
 socketio = SocketIO(app)
 
+###############
+# Flask Login #
+###############
+
 ##################
 # Flask Settings #
 ##################
-app.config['SECRET_KEY'] = 'secret!'
-app.config['DATABASE_WEBHOOK_URL'] = 'http://52.10.249.147:8123/webhook/'
-app.config['MY_WEBHOOK_URL'] = 'http://52.24.215.226/webhook/'
+app.config['SECRET_KEY'] = settings.SECRET_KEY
+app.config['DATABASE_WEBHOOK_URL'] = settings.DATABASE_WEBHOOK_URL
+app.config['FLASK_WEBHOOK_URL'] = settings.FLASK_WEBHOOK_URL
 
 ######################
 # SocketIO Functions #
@@ -26,7 +31,7 @@ def test_message(message):
 
 	headers = {'Content-Type': 'application/json'}
 	payload = {
-		'source' : app.config['MY_WEBHOOK_URL'],
+		'source' : app.config['FLASK_WEBHOOK_URL'],
 		'car_name' : car_name
 	}
 

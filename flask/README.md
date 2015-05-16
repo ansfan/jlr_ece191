@@ -7,7 +7,7 @@ Definition: Client and Server; where client is our webapp and our server is our 
 4. Celery will be reading on redis at path /0/ and detect each request and send the data. 
 
 ### To Run
-1. pip install flask && pip install requests && pip install celery && pip install kafka-python
+1. pip install flask && pip install requests && pip install celery && pip install kafka-python && pip install flask-login
 2. python app.py
 3. redis-server
 4. celery worker -A app.celery --loglevel=debug

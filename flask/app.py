@@ -3,6 +3,7 @@ import time
 import requests
 from celery import Celery
 import json
+import settings_app as settings
 
 ##########################
 # Self-Defined Functions #
@@ -32,8 +33,7 @@ app.debug = True
 ##################
 # Flask Settings #
 ##################
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config['SECRET_KEY'] = 'secret!'
 
 ################
 # RVI Settings #
@@ -45,6 +45,9 @@ rvi_thread_pool = {}
 ####################
 # Celery Functions #
 ####################
+app.config['CELERY_BROKER_URL'] = settings.CELERY_BROKER_URL
+app.config['CELERY_RESULT_BACKEND'] = settings.CELERY_RESULT_BACKEND
+
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
@@ -90,7 +93,7 @@ def webhook():
 				print "Sending data to: " + response_address
 				print "With data type: " + response[0]
 
-				vin1 = RVIConsumer('172.31.42.145:6667', 'rvi', response[0], 'http://52.24.215.226/webhook/')
+				vin1 = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, 'rvi', response[0], settings.FLASK_WEBHOOK_URL)
 				vin1.start()
 
 				rvi_thread_pool[response[0]] = vin1
