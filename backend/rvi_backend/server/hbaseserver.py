@@ -38,7 +38,7 @@ class HBaseServer(threading.Thread):
         self.cons = SimpleConsumer(self.kafka, None, self.topic)
         self.cons.seek(0,2)
         self.m = None
-        self.car_table = None
+        self.car_table = self.hbase_connect.table('rvi_taxi')
         self.payload = None
         self.vin = None
         self.time = None
@@ -57,7 +57,6 @@ class HBaseServer(threading.Thread):
                 self.time = self.payload['timestamp']
                 self.data = self.payload['data']
 
-                self.car_table = self.hbase_connect.table('rvi_taxi')
                 self.row_key = self.vin+self.time
                 
                 if self.car_table.insert(self.row_key,{'car':{'data':self.data}}) == 200:
