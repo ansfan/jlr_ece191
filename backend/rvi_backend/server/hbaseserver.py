@@ -60,7 +60,7 @@ class HBaseServer(threading.Thread):
                 self.row_key = self.vin+self.time
                 
                 if self.car_table.insert(self.row_key,{'car':{'data':self.data}}) == 200:
-                    logger.info('HBase Server: key: %s, table: %s, car{data: %s}.', self.time, self.vin, self.data)
+                    logger.info('HBase Server: key: %s, table: %s, car{data: %s}.', self.time, 'rvi_taxi', self.data)
 
                 else:
                     logger.info('Data Push into HBase unsuccessful...')
