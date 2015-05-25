@@ -270,10 +270,12 @@ def webhook():
 		# avail_count['key1'] = request.remote_addr
 		print "Received info from " + request.remote_addr
 		data = request.get_json()
-
-		vin = '/' + data['vin']
+		
+		parsed_data = json.loads(data)
+		vin = '/' + str(parsed_data['vin'])
 
 		print "Data: " + str(data)
+		print "Vin: " + str(vin)
 		socketio.emit('my response', {'data': data}, namespace=vin)
 
 	return "OK"
