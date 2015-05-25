@@ -6,11 +6,11 @@
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-	<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<!-- <link rel="stylesheet" type="text/css" href="/FontAwesome/css/font-awesome.min.css"> -->
 
-	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 
 	<style>
 	  #map { width: 1000px; height: 600px; }
@@ -96,8 +96,8 @@
 			</div>
 	</div>
 
-	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="js/socketio.min.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 		var map = L.mapbox.map('map', 'mapbox.streets')
