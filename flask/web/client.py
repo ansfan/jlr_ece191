@@ -78,9 +78,8 @@ def google_authorized(resp):
 				parse_email = parse_user['email']
 				parse_first_name = parse_user['first_name']
 				parse_last_name = parse_user['last_name']
-				parse_role = parse_user['role']
 
-				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name, parse_role)
+				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name)
 				
 				login_user(local_user)
 
@@ -98,8 +97,10 @@ def google_authorized(resp):
 				parse_last_name = parse_user['last_name']
 				parse_role = parse_user['role']
 
-				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name, parse_role)
+				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name)
 				login_user(local_user)
+
+				return redirect(url_for('add_vehicle'))
 				
 		else:
 			print "Google Error"
@@ -133,9 +134,10 @@ def load_user(userid):
 		first_name = user['first_name']
 		last_name = user['last_name']
 		role = user['role']
+
 		print 'User ' + first_name + ' loaded'
 		
-		local_user = models.User(parse_id, unique_id, email, first_name, last_name, role)
+		local_user = models.User(parse_id, unique_id, email, first_name, last_name, role_assigned=role)
 		return local_user
 
 ##################
@@ -199,6 +201,22 @@ def error_internalserver(error):
 def login():
 	return render_template('templogin.html')
 
+@app.route('/add', methods=['GET', 'POST'])
+@login_required
+def add_vehicle():
+	if request.method == 'POST':
+		car_name = request.form['car_name']
+		car_vin = request.form['car_vin']
+
+		r = parse.AddCar(g.user.id, car_vin, car_name)
+
+		if r:
+			flash('Your car ' + car_name + ' is added!')
+
+		return redirect(url_for('index'))
+
+	return render_template('add.html')
+
 @app.route('/authhandler/loginGoogle')
 def google_login():
 	next_url = request.args.get('next') or url_for('index')
@@ -210,8 +228,12 @@ def google_login():
 @login_required
 def index():
 	user = g.user
+
+	list_of_cars = parse.LoadCars(user.id)
+
 	return render_template('index.html',
-		user = user)
+		user = user,
+		cars_list = list_of_cars)
 
 @app.route('/webhook/', methods=['POST'])
 def webhook():
@@ -234,5 +256,6 @@ def dashboard():
 def logout():
 	logout_user()
 	return redirect(url_for('login'))
+
 if __name__ == '__main__':
 	socketio.run(app)

@@ -13,7 +13,7 @@ class User(UserMixin):
 	# last_name = db.Column(db.String(64), index = True)
 	# role = db.Column(db.SmallInteger, default = ROLE_USER)
 
-	def __init__(self, parse_id, auth_id, email, first_name, last_name, role_assigned):
+	def __init__(self, parse_id, auth_id, email, first_name, last_name, role_assigned='USER'):
 		self.id = parse_id
 		self.unique_id = auth_id
 		self.email = email

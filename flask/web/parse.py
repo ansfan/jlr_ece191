@@ -50,13 +50,6 @@ class parseRESTHandler:
 
 		result = json.loads(connection.getresponse().read())
 		self.printDebug('result: ' + str(result))
-		
-		# if result['results'] == []:
-		# 	return False
-		# else: 
-		# 	self.printDebug('result obj: ' + str(result['results'][0]))
-		# 	self.printDebug('objid: ' + result['results'][0]['objectId'])
-		# return result['results'][0]
 
 		try:
 			if result['results'] != []:
@@ -85,3 +78,44 @@ class parseRESTHandler:
 		except KeyError:
 			self.printDebug('Failed to load user. Parse responded: ' + result)
 			return None
+
+	# Add car
+	def AddCar(self, user_id, car_vin, car_name):
+		connection = httplib.HTTPSConnection('api.parse.com', 443)
+		connection.connect()
+		connection.request('POST', '/1/classes/carsDatabase', json.dumps({
+			"account" : user_id,
+			"car_name" : car_name,
+			"car_vin" : car_vin
+			 }), {
+			"X-Parse-Application-Id": self.APPLICATION_ID,
+			"X-Parse-REST-API-Key": self.API_KEY,
+			"Content-Type": "application/json"
+			 })
+
+		result = json.loads(connection.getresponse().read())
+		self.printDebug('Car added: ' + str(result))
+
+		return result['objectId']
+
+	# Load all cars owned by dude
+	def LoadCars(self, user_id):
+		connection = httplib.HTTPSConnection('api.parse.com', 443)
+		params = urllib.urlencode({"where" : json.dumps({
+			"account": user_id,
+			 })})
+		connection.connect()
+		connection.request('GET', '/1/classes/carsDatabase?%s' % params, '', {
+			"X-Parse-Application-Id": self.APPLICATION_ID,
+			"X-Parse-REST-API-Key": self.API_KEY
+			 })
+
+		result = json.loads(connection.getresponse().read())
+
+		try:
+			if result['results'] != []:
+				self.printDebug('result obj: ' + str(result['results']))
+				return result['results']
+		except KeyError:
+			self.printDebug('Parse: No cars found')
+			return False
