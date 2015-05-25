@@ -46,7 +46,7 @@
               <ul class="dropdown-menu">
                 {% for cars in cars_list %}
 					<li><a tabindex="-1" href="/car/{{cars.car_vin}}">{{cars.car_name}}</a></li>
-				{% else  %}
+				{% else %}
 					<li><a tabindex="-1">Unbelievable. No cars!</a></li>
 				{% endfor %}
 				<li class="divider"></li>
@@ -67,7 +67,7 @@
 		<p>
 			{% with messages = get_flashed_messages() %}
 				{% if messages %}
-					<ul class=flashes>
+					<ul class="flashes">
 						{% for message in messages %}
 							<li>{{ message }}</li>
 						{% endfor %}

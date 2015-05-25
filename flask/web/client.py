@@ -230,6 +230,8 @@ def index():
 	user = g.user
 
 	list_of_cars = parse.LoadCars(user.id)
+	if not list_of_cars:
+		list_of_cars = []
 
 	return render_template('index.html',
 		user = user,
@@ -241,7 +243,7 @@ def index_vehicle(vin):
 	user = g.user
 
 	list_of_cars = parse.LoadCars(user.id)
-	
+
 	return render_template('index.html',
 		user = user,
 		cars_list = list_of_cars,
