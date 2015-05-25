@@ -147,6 +147,9 @@
 
 				$('#log').append('<p>' + data + '</p>');
 			});
+
+			// init rvi connection
+			socket.emit('car request', {data: '{{ car_namespace }}' });
 		{% endif %}
 		// $('form#emit').submit(function(event) {
 		// 	socket.emit('car request', {data: $('#emit_data').val()});

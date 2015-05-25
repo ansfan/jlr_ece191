@@ -164,7 +164,9 @@ def test_message(message):
 	r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
 	# print r
 
-	emit('my response', {'data': car_name + ' requested'}, namespace='/car')
+	prep_carname = '/' + car_name
+	
+	emit('my response', {'data': car_name + ' requested'}, namespace=prep_carname)
 
 # @socketio.on('my broadcast event', namespace='/test')
 # def test_message2(message):
@@ -243,6 +245,19 @@ def index_vehicle(vin):
 	user = g.user
 
 	list_of_cars = parse.LoadCars(user.id)
+
+	headers = {'Content-Type': 'application/json'}
+	payload = {
+		'source' : app.config['FLASK_WEBHOOK_URL'],
+		'car_name' : vin
+	}
+
+	try:
+		r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
+		
+	except Exception as e:
+		print "Error establishing connection to DB."
+		print e.message, e.args
 
 	return render_template('index.html',
 		user = user,
