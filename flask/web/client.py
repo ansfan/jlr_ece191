@@ -78,11 +78,10 @@ def google_authorized(resp):
 				parse_email = parse_user['email']
 				parse_first_name = parse_user['first_name']
 				parse_last_name = parse_user['last_name']
+				parse_role = parse_user['role']
 
-				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name)
+				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name, parse_role)
 				
-				# print 'local: ' + str(local_user)
-
 				login_user(local_user)
 
 			else:
@@ -97,8 +96,9 @@ def google_authorized(resp):
 				parse_email = parse_user['email']
 				parse_first_name = parse_user['first_name']
 				parse_last_name = parse_user['last_name']
+				parse_role = parse_user['role']
 
-				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name)
+				local_user = models.User(parse_parse_id, parse_unique_id, parse_email, parse_first_name, parse_last_name, parse_role)
 				login_user(local_user)
 				
 		else:
@@ -132,10 +132,10 @@ def load_user(userid):
 		email = user['email']
 		first_name = user['first_name']
 		last_name = user['last_name']
-
+		role = user['role']
 		print 'User ' + first_name + ' loaded'
 		
-		local_user = models.User(parse_id, unique_id, email, first_name, last_name)
+		local_user = models.User(parse_id, unique_id, email, first_name, last_name, role)
 		return local_user
 
 ##################
@@ -148,8 +148,9 @@ app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 ######################
 # SocketIO Functions #
 ######################
-@socketio.on('car request', namespace='/car')
+@socketio.on('car request')
 def test_message(message):
+	print message
 	car_name =  message['data']
 
 	headers = {'Content-Type': 'application/json'}
@@ -158,10 +159,10 @@ def test_message(message):
 		'car_name' : car_name
 	}
 
-	r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
-	print r
+	# r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
+	# print r
 
-	emit('my response', {'data': car_name + ' requested'})
+	emit('my response', {'data': car_name + ' requested'}, namespace='/car')
 
 # @socketio.on('my broadcast event', namespace='/test')
 # def test_message2(message):
@@ -228,5 +229,10 @@ def webhook():
 def dashboard():
 	return render_template('dashboard.html')
 	
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for('login'))
 if __name__ == '__main__':
 	socketio.run(app)

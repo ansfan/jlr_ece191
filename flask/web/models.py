@@ -13,7 +13,7 @@ class User(UserMixin):
 	# last_name = db.Column(db.String(64), index = True)
 	# role = db.Column(db.SmallInteger, default = ROLE_USER)
 
-	def __init__(self, parse_id, auth_id, email, first_name, last_name, role_assigned=ROLE_USER):
+	def __init__(self, parse_id, auth_id, email, first_name, last_name, role_assigned):
 		self.id = parse_id
 		self.fb_id = auth_id
 		self.email = email
@@ -23,6 +23,9 @@ class User(UserMixin):
 
 	def __repr__(self):
 		return '<User %r>' % (self.first_name)
+
+	def is_admin(self):
+		return self.role == 'ADMIN'
 
 	# These four methods are for Flask-Login
 	def is_authenticated(self):

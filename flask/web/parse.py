@@ -23,7 +23,8 @@ class parseRESTHandler:
 			"first_name" : first_name,
 			"last_name" : last_name,
 			"email" : email,
-			"unique_id" : unique_id
+			"unique_id" : unique_id,
+			"role" : "USER"  # default new user is USER
 			 }), {
 			"X-Parse-Application-Id": self.APPLICATION_ID,
 			"X-Parse-REST-API-Key": self.API_KEY,
