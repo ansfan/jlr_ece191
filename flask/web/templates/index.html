@@ -53,7 +53,7 @@
 				<li><a href="/add">Add a Vehicle...</a></li>
               </ul>
             </li>
-            <li><a href="#">Sign Out</a></li>
+            <li><a href="/logout">Sign Out</a></li>
           </ul>
         </li>
     </ul>
@@ -127,31 +127,31 @@
 			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
 		}
 	$(document).ready(function(){
+		{% if car_namespace %}
+			var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
 
-		var socket = io.connect('http://' + document.domain + ':' + location.port + '/car');
-
-		socket.on('my response', function(msg) {
-			data = msg.data;
-			console.log('init: ' + data);
-			
-			try {
-				var json_data = JSON.parse(data);
+			socket.on('my response', function(msg) {
+				data = msg.data;
+				console.log('init: ' + data);
 				
-				console.log('data is json: ' + json_data);
-				// console.log(json_data['data'][0]['value']['lat']);	
-				point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);	
-			}
-			catch(err) {
-				console.log('non-json data');
-			}
+				try {
+					var json_data = JSON.parse(data);
+					
+					console.log('data is json: ' + json_data);
+					// console.log(json_data['data'][0]['value']['lat']);	
+					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);	
+				}
+				catch(err) {
+					console.log('non-json data');
+				}
 
-			$('#log').append('<p>' + data + '</p>');
-		});
-
-		$('form#emit').submit(function(event) {
-			socket.emit('car request', {data: $('#emit_data').val()});
-			return false;
-		});
+				$('#log').append('<p>' + data + '</p>');
+			});
+		{% endif %}
+		// $('form#emit').submit(function(event) {
+		// 	socket.emit('car request', {data: $('#emit_data').val()});
+		// 	return false;
+		// });
 		// $('form#broadcast').submit(function(event) {
 		// 	socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
 		// 	return false;

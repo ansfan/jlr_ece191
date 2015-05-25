@@ -161,7 +161,7 @@ def test_message(message):
 		'car_name' : car_name
 	}
 
-	# r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
+	r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
 	# print r
 
 	emit('my response', {'data': car_name + ' requested'}, namespace='/car')
@@ -235,6 +235,18 @@ def index():
 		user = user,
 		cars_list = list_of_cars)
 
+@app.route('/car/<vin>', methods=['GET'])
+@login_required
+def index_vehicle(vin):
+	user = g.user
+
+	list_of_cars = parse.LoadCars(user.id)
+	
+	return render_template('index.html',
+		user = user,
+		cars_list = list_of_cars,
+		car_namespace = vin)
+
 @app.route('/webhook/', methods=['POST'])
 def webhook():
 	if request.method == 'POST':
@@ -242,8 +254,10 @@ def webhook():
 		print "Received info from " + request.remote_addr
 		data = request.get_json()
 
+		vin = '/' + data['vin']
+
 		print "Data: " + str(data)
-		socketio.emit('my response', {'data': data}, namespace='/car')
+		socketio.emit('my response', {'data': data}, namespace=vin)
 
 	return "OK"
 
