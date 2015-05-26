@@ -177,9 +177,11 @@ def test_message(message):
 # 	emit('my response', {'data': message['data']}, broadcast=True)
 
 def create_namespace(name):
+	print "Create namespace called"
 	namespace = '/' + name
 	@socketio.on('connect', namespace=namespace)
-	def test_connect():
+	def new_tunnel():
+		print "Tunnel created"
 		emit('my response', {'data': 'Connected'})
 
 @socketio.on('connect', namespace='/car')
@@ -266,11 +268,15 @@ def index_vehicle(vin):
 	}
 
 	try:
+		print "Sending data request to DB."
 		r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
 		
 	except Exception as e:
 		print "Error establishing connection to DB."
 		print e.message, e.args
+
+
+	create_namespace(vin)
 
 	return render_template('index.html',
 		user = user,
@@ -290,7 +296,6 @@ def webhook():
 		print "Data: " + str(data)
 		print "Vin: " + str(vin)
 
-		create_namespace(vin)
 		socketio.emit('my response', {'data': data}, namespace=vin)
 
 	return "OK"
