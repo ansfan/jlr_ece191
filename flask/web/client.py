@@ -4,6 +4,9 @@ import requests
 import json 
 import settings_client as settings
 
+import logging
+logging.basicConfig()
+
 #################
 # Parse Configs #
 #################
@@ -152,7 +155,7 @@ app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 ######################
 @socketio.on('car request')
 def test_message(message):
-	print message
+	print 'car request: ' + message
 	car_name =  message['data']
 
 	headers = {'Content-Type': 'application/json'}
@@ -173,6 +176,12 @@ def test_message(message):
 # 	print message['data']
 # 	emit('my response', {'data': message['data']}, broadcast=True)
 
+def create_namespace(name):
+	namespace = '/' + name
+	@socketio.on('connect', namespace=namespace)
+	def test_connect():
+		emit('my response', {'data': 'Connected'})
+
 @socketio.on('connect', namespace='/car')
 def test_connect():
 	emit('my response', {'data': 'Connected'})
@@ -180,6 +189,10 @@ def test_connect():
 @socketio.on('disconnect', namespace='/car')
 def test_disconnect():
 	print 'Client disconnected'
+
+@socketio.on_error_default
+def default_error_handler(e):
+	print e.message, e.args
 
 ##############################
 # Start website redirections #
@@ -276,6 +289,8 @@ def webhook():
 
 		print "Data: " + str(data)
 		print "Vin: " + str(vin)
+
+		create_namespace(vin)
 		socketio.emit('my response', {'data': data}, namespace=vin)
 
 	return "OK"
