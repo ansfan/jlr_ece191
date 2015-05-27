@@ -23,7 +23,20 @@
 	<div class="grid-stack" data-gs-width="12">
         <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="9" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
-				<div id='map'></div>
+				<div id="map"></div>
+				<div id="map-info">
+					<div class="row">
+						<div class="col-xs-4">
+							<div id="timestamp-gps" class="map-text">GPS time</div>
+						</div>
+						<div class="col-xs-4">
+							<div id="timestamp-delta" class="map-text">Delta</div>
+						</div>
+						<div class="col-xs-4">
+							<div id="timestamp-current" class="map-text">Current time</div>
+						</div>
+					</div>
+				</div>
             </div>
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
@@ -120,5 +133,9 @@
 		// 	return false;
 		// });
 	});
+	</script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/current_time.js') }}"></script>
+	<script>
+		startTime("timestamp-current");
 	</script>
 {% endblock %}
