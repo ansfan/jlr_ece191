@@ -3,17 +3,12 @@
 	<title>Index</title>
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
-	<!-- <link rel="stylesheet" type="text/css" href="/FontAwesome/css/font-awesome.min.css"> -->
-
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-
-	<style>
-	  #map { width: 1000px; height: 600px; }
-	</style>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/gridstack.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class = "container">
+<div class="container-fluid darklue">
 	<p>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
@@ -25,18 +20,44 @@
 			{% endif %}
 		{% endwith %}
 	</p>
-		<div class = "row">
-			<div class = "col-xs-1 col-sm-1"></div>
-			<div class = "col-xs-10 col-sm-10">
+	<div class="grid-stack" data-gs-width="12" data-gs-animate="yes">
+        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="9" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
 				<div id='map'></div>
-				<div id="log"></div>
-			</div>
-			<div class = "col-xs-1 col-sm-1"></div>
-		</div>
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Speedometer
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Altitude Text
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="3" data-gs-min-width="3" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Speed Chart
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="6" data-gs-width="4" data-gs-height="3" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Altitude Chart
+            </div>
+        </div>
+    </div>
+    <div class="scroll-top page-scroll visible-xs visble-sm">
+        <a class="btn btn-primary" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
+    <div id="log"></div>
 </div>
 {% endblock %}
 
 {% block content_js %}
+	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 		var map = L.mapbox.map('map', 'mapbox.streets')
