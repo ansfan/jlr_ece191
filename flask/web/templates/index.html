@@ -145,4 +145,17 @@
 	<script>
 		startTime("timestamp-current");
 	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+	<script src="{{ url_for('static', filename='js/gridstack.min.js') }}"></script>
+	<script type="text/javascript">
+	$(function () {
+	    $('.grid-stack').gridstack({
+	        width: 12,
+	        always_show_resize_hyesle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+	        resizable: {
+	            handles: 'e, se, s, sw, w'
+	        }
+	    });
+	});
+	</script>
 {% endblock %}
