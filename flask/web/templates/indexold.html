@@ -1,0 +1,166 @@
+<html>
+
+<head>
+	<title>Index</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<!-- <link rel="stylesheet" type="text/css" href="/FontAwesome/css/font-awesome.min.css"> -->
+
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+
+	<style>
+	  #map { width: 1000px; height: 600px; }
+	</style>
+
+</head>
+
+<body>
+<!-- Beginning of Navigation Bar -->
+	<nav class = "navbar navbar-default navbar-custom">
+  		<div class = "container">
+    		<div class = "navbar-header">
+        		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span> 
+      			</button>
+      	<a class = "navbar-brand" href="#">
+        <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+
+      	</a>
+    		</div>
+
+    <div class = "collapse navbar-collapse" >
+    <ul class="nav navbar-nav">
+      <li class= "dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{user.first_name}}, {{user.role}}
+          <span class="caret"></span></a>
+          <ul class = "dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            <li><a tabindex="-1" href="#">Dashboard</a></li>
+            <li class="dropdown-submenu">
+              <a class="dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">Vehicle</a>
+              <ul class="dropdown-menu">
+                {% for cars in cars_list %}
+					<li><a tabindex="-1" href="/car/{{cars.car_vin}}">{{cars.car_name}}</a></li>
+				{% else %}
+					<li><a tabindex="-1">Unbelievable. No cars!</a></li>
+				{% endfor %}
+				<li class="divider"></li>
+				<li><a href="/add">Add a Vehicle...</a></li>
+              </ul>
+            </li>
+            <li><a href="/logout">Sign Out</a></li>
+          </ul>
+        </li>
+    </ul>
+    </div>
+
+  		</div>
+	</nav>
+<!-- End of Navigation Bar -->
+
+	<div class = "container">
+		<p>
+			{% with messages = get_flashed_messages() %}
+				{% if messages %}
+					<ul class="flashes">
+						{% for message in messages %}
+							<li>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endwith %}
+		</p>
+			<div class = "row">
+				<div class = "col-xs-1 col-sm-1"></div>
+				<div class = "col-xs-10 col-sm-10">
+					<div id='map'></div>
+					<div id="log"></div>
+
+					<p></p>
+					<form id="emit" method="post">
+						<input id="emit_data" name="car_name" type="text" placeholder=" Enter Location">
+						<input type="submit" value="Submit">
+					</form>
+				</div>
+				<div class = "col-xs-1 col-sm-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<a href="/dashboard">Link to Dashboard</a>
+				</div>
+			</div>
+	</div>
+
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
+	<script type="text/javascript" charset="utf-8">
+		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
+		var map = L.mapbox.map('map', 'mapbox.streets')
+			.setView([37, -122], 14);
+
+		// Add a new line to the map with no points.
+		var polyline = L.polyline([]).addTo(map);
+
+		// Keep a tally of how many points we've added to the map.
+		var pointsAdded = 0;
+
+		// Start drawing the polyline.
+		 // add();
+
+		function point_add(car_lat, car_long) {
+			console.log('car_lat: ' + car_lat + ', car_long: ' + car_long);
+			// `addLatLng` takes a new latLng coordinate and puts it at the end of the
+			// line. You optionally pull points from your data or generate them. Here
+			// we make a sine wave with some math.
+			polyline.addLatLng(L.latLng(parseFloat(car_lat), parseFloat(car_long)));
+			console.log('added line point');
+			// Pan the map along with where the line is being added.
+			map.setView([car_lat, car_long], 14);
+			console.log('shifted map view');
+			// Continue to draw and pan the map by calling `add()`
+			// until `pointsAdded` reaches 360.
+			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
+		}
+	$(document).ready(function(){
+		{% if car_namespace %}
+			var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
+
+			socket.on('my response', function(msg) {
+				data = msg.data;
+				console.log('init: ' + data);
+				
+				try {
+					var json_data = JSON.parse(data);
+					
+					console.log('data is json: ' + json_data);
+					// console.log(json_data['data'][0]['value']['lat']);	
+					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);	
+				}
+				catch(err) {
+					console.log('non-json data');
+				}
+
+				$('#log').append('<p>' + data + '</p>');
+			});
+
+			// init rvi connection
+			socket.emit('car request', {data: '{{ car_namespace }}' });
+		{% endif %}
+		// $('form#emit').submit(function(event) {
+		// 	socket.emit('car request', {data: $('#emit_data').val()});
+		// 	return false;
+		// });
+		// $('form#broadcast').submit(function(event) {
+		// 	socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+		// 	return false;
+		// });
+	});
+	</script>
+
+</body>
+</html>
