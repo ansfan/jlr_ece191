@@ -19,10 +19,10 @@ def jsonifyCSData(data):
 	return result
 
 # Import data
-# testdata = []
-# with open('../cabspottingdata/new_abboip2.txt') as inputfile:
-# 	for line in inputfile:
-# 		testdata.append(jsonifyCSData(line))
+testdata = []
+with open('../cabspottingdata/new_abboip2.txt') as inputfile:
+	for line in inputfile:
+		testdata.append(jsonifyCSData(line))
 
 ########################
 # Flask Initialization #
@@ -90,24 +90,13 @@ def webhook():
 						print "Unable to find thread for car: " + response[0]
 
 			except IndexError:
-				if response[0] in rvi_thread_pool:
-					print "Thread for " + response[0] + " is already running. "
+				print "Sending data to: " + response_address
+				print "With data type: " + response[0]
 
-					if not rvi_thread_pool[response[0]].is_running():
-						print "Thread " + response[0] + " has stopped; restarting thread."
-						rvi_thread = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, 'rvi', response[0], settings.FLASK_WEBHOOK_URL)
-						rvi_thread.start()
-						rvi_thread_pool[response[0]] = rvi_thread
+				vin1 = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, 'rvi', response[0], settings.FLASK_WEBHOOK_URL)
+				vin1.start()
 
-					# need to optimize for multi web server support
-				else:
-					print "Sending data to: " + response_address
-					print "With data type: " + response[0]
-
-					vin1 = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, 'rvi', response[0], settings.FLASK_WEBHOOK_URL)
-					vin1.start()
-
-					rvi_thread_pool[response[0]] = vin1
+				rvi_thread_pool[response[0]] = vin1
 
 		# for items in testdata:
 		# 	payload = {
