@@ -52,7 +52,3 @@ body {
 .map-text-right {
     float: right;
 }
-
-html, body, #map {
-    height:100vh;
-}
