@@ -5,10 +5,11 @@
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/gridstack.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
+	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid darklue">
+<div class="container-fluid darklue" id="page-top">
 	<p>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
@@ -21,7 +22,7 @@
 		{% endwith %}
 	</p>
 	<div class="grid-stack" data-gs-width="12">
-        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="9" data-gs-no-resize="yes">
+        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="8" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
 				<div id="map"></div>
 				<div id="map-info">
@@ -39,17 +40,17 @@
 				</div>
             </div>
         </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
                 Speedometer
             </div>
         </div>
-        <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
+        <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
                 Altitude Text
             </div>
         </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="3" data-gs-min-width="3" data-gs-no-resize="yes">
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="3" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
                 Speed Chart
             </div>
