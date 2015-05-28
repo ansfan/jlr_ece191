@@ -1,107 +1,82 @@
-<html>
-
-<head>
+{% extends "base.html" %}
+{% block header %}
 	<title>Index</title>
-	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	<!-- <link rel="stylesheet" type="text/css" href="/FontAwesome/css/font-awesome.min.css"> -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/gridstack.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
+	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+{% endblock %}
 
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-
-	<style>
-	  #map { width: 1000px; height: 600px; }
-	</style>
-
-</head>
-
-<body>
-<!-- Beginning of Navigation Bar -->
-	<nav class = "navbar navbar-default navbar-custom">
-  		<div class = "container">
-    		<div class = "navbar-header">
-        		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        		<span class="icon-bar"></span>
-        		<span class="icon-bar"></span>
-        		<span class="icon-bar"></span> 
-      			</button>
-      	<a class = "navbar-brand" href="#">
-        <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
-
-      	</a>
-    		</div>
-
-    <div class = "collapse navbar-collapse" >
-    <ul class="nav navbar-nav">
-      <li class= "dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{user.first_name}}, {{user.role}}
-          <span class="caret"></span></a>
-          <ul class = "dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-            <li><a tabindex="-1" href="#">Dashboard</a></li>
-            <li class="dropdown-submenu">
-              <a class="dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">Vehicle</a>
-              <ul class="dropdown-menu">
-                {% for cars in cars_list %}
-					<li><a tabindex="-1" href="/car/{{cars.car_vin}}">{{cars.car_name}}</a></li>
-				{% else %}
-					<li><a tabindex="-1">Unbelievable. No cars!</a></li>
-				{% endfor %}
-				<li class="divider"></li>
-				<li><a href="/add">Add a Vehicle...</a></li>
-              </ul>
-            </li>
-            <li><a href="/logout">Sign Out</a></li>
-          </ul>
-        </li>
-    </ul>
+{% block content %}
+<div class="container-fluid darklue" id="page-top">
+	<p>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class="flashes">
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+	</p>
+	 <div class="grid-stack" data-gs-width="12">
+        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="8" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+				<div id="map"></div>
+				<div id="map-info">
+					<div class="row">
+						<div class="col-xs-4">
+							<div id="timestamp-gps" class="map-text">GPS time</div>
+						</div>
+						<div class="col-xs-4">
+							<div id="timestamp-delta" class="map-text">Delta</div>
+						</div>
+						<div class="col-xs-4">
+							<div id="timestamp-current" class="map-text">Current time</div>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Speedometer
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Altitude Text
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="3" data-gs-min-width="3" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Speed Chart
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="6" data-gs-width="4" data-gs-height="3" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                Altitude Chart
+            </div>
+        </div>
     </div>
+    <div class="scroll-top page-scroll visible-xs visble-sm">
+        <a class="btn btn-primary" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
+    <div id="log"></div>
+</div>
+{% endblock %}
 
-  		</div>
-	</nav>
-<!-- End of Navigation Bar -->
-
-	<div class = "container">
-		<p>
-			{% with messages = get_flashed_messages() %}
-				{% if messages %}
-					<ul class="flashes">
-						{% for message in messages %}
-							<li>{{ message }}</li>
-						{% endfor %}
-					</ul>
-				{% endif %}
-			{% endwith %}
-		</p>
-			<div class = "row">
-				<div class = "col-xs-1 col-sm-1"></div>
-				<div class = "col-xs-10 col-sm-10">
-					<div id='map'></div>
-					<div id="log"></div>
-
-					<p></p>
-					<form id="emit" method="post">
-						<input id="emit_data" name="car_name" type="text" placeholder=" Enter Location">
-						<input type="submit" value="Submit">
-					</form>
-				</div>
-				<div class = "col-xs-1 col-sm-1"></div>
-			</div>
-			<div class="row">
-				<div class="col-xs-12">
-					<a href="/dashboard">Link to Dashboard</a>
-				</div>
-			</div>
-	</div>
-
-	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+{% block content_js %}
 	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 		var map = L.mapbox.map('map', 'mapbox.streets')
 			.setView([37, -122], 14);
+		map.invalidateSize();
 
 		// Add a new line to the map with no points.
 		var polyline = L.polyline([]).addTo(map);
@@ -161,6 +136,8 @@
 		// });
 	});
 	</script>
-
-</body>
-</html>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/current_time.js') }}"></script>
+	<script>
+		startTime("timestamp-current");
+	</script>
+{% endblock %}

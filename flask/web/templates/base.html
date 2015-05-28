@@ -1,11 +1,14 @@
 <html>
 <head>
-  <title>Remote Dashboard UI</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-  <script type="text/javascript" src="js/jQueryv1.11.3.js"></script>
-  <script type ="text/javascript" src="js/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="FontAwesome/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
+
+  {% block header %}
+  {% endblock %}
 </head>
 <body>
 <nav class = "navbar navbar-default navbar-custom">
