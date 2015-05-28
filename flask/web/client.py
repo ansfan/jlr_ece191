@@ -4,6 +4,9 @@ import requests
 import json 
 import settings_client as settings
 
+import logging
+logging.basicConfig()
+
 #################
 # Parse Configs #
 #################
@@ -152,7 +155,7 @@ app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 ######################
 @socketio.on('car request')
 def test_message(message):
-	print message
+	print 'car request: ' + message
 	car_name =  message['data']
 
 	headers = {'Content-Type': 'application/json'}
@@ -173,6 +176,14 @@ def test_message(message):
 # 	print message['data']
 # 	emit('my response', {'data': message['data']}, broadcast=True)
 
+def create_namespace(name):
+	print "Create namespace called"
+	namespace = '/' + name
+	@socketio.on('connect', namespace=namespace)
+	def new_tunnel():
+		print "Tunnel created"
+		emit('my response', {'data': 'Connected'})
+
 @socketio.on('connect', namespace='/car')
 def test_connect():
 	emit('my response', {'data': 'Connected'})
@@ -180,6 +191,10 @@ def test_connect():
 @socketio.on('disconnect', namespace='/car')
 def test_disconnect():
 	print 'Client disconnected'
+
+@socketio.on_error_default
+def default_error_handler(e):
+	print e.message, e.args
 
 ##############################
 # Start website redirections #
@@ -201,7 +216,7 @@ def error_internalserver(error):
 #################
 @app.route('/', methods=['GET'])
 def login():
-	return render_template('templogin.html')
+	return render_template('login.html')
 
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -253,11 +268,15 @@ def index_vehicle(vin):
 	}
 
 	try:
+		print "Sending data request to DB."
 		r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
 		
 	except Exception as e:
 		print "Error establishing connection to DB."
 		print e.message, e.args
+
+
+	create_namespace(vin)
 
 	return render_template('index.html',
 		user = user,
@@ -276,13 +295,21 @@ def webhook():
 
 		print "Data: " + str(data)
 		print "Vin: " + str(vin)
+
 		socketio.emit('my response', {'data': data}, namespace=vin)
 
 	return "OK"
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-	return render_template('dashboard.html')
+
+	user = g.user
+
+	list_of_cars = parse.LoadCars(user.id)
+	
+	return render_template('dashboard.html',
+		user = user,
+		cars_list = list_of_cars)
 	
 @app.route('/logout', methods=['GET'])
 @login_required

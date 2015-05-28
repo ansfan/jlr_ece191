@@ -1,48 +1,80 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
 <head>
-  <title>Remote Dashboard UI</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-  <script type="text/javascript" src="js/jQueryv1.11.3.js"></script>
-  <script type ="text/javascript" src="js/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="FontAwesome/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+  {% block header %}
+  {% endblock %}
 </head>
 <body>
-<nav class = "navbar navbar-default navbar-custom">
-  <div class = "container">
-    <div class = "navbar-header">
+  <!-- Beginning of Navigation Bar -->
+  <nav class="navbar navbar-default navbar-custom">
+    <div class="container">
+      <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span> 
-      </button>
-      <a class = "navbar-brand" href="#">
-        <i class = "fa fa-globe"></i>
-      </a>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span> 
+        </button>
+        <a class="navbar-brand" href="#">
+          <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class= "dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              {{user.first_name}}
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li><a tabindex="-1" href="/dashboard">Dashboard</a></li>
+              <li class="dropdown-submenu">
+                <a class="dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">Vehicle</a>
+                <ul class="dropdown-menu">
+                  {% for cars in cars_list %}
+                  <li><a tabindex="-1" href="/car/{{cars.car_vin}}">{{cars.car_name}}</a></li>
+                  {% else %}
+                  <li><a tabindex="-1">Unbelievable. No cars!</a></li>
+                  {% endfor %}
+                  <li class="divider"></li>
+                  <li><a href="/add">Add a Vehicle...</a></li>
+                </ul>
+              </li>
+              <li><a href="/logout">Sign Out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
-
-    <div class = "collapse navbar-collapse" >
-    <ul class="nav navbar-nav">
-      <li class= "dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Username
-          <span class="caret"></span></a>
-          <ul class = "dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-            <li><a tabindex="-1" href="#">Data</a></li>
-            <li class="dropdown-submenu">
-              <a class="dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">Vehicle</a>
-              <ul class="dropdown-menu">
-                <li><a tabindex="-1" href="#">V1</a></li>
-                <li><a tabindex="-1" href="#">V2</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Sign Out</a></li>
-          </ul>
-        </li>
-    </ul>
-    </div>
-
-  </div>
-</nav>
-
-  </body>
+  </nav>
+<!-- End of Navigation Bar -->
+  {% block content %}
+  {% endblock %}
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-1.11.4.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.ui.touch-punch.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+  <script src="{{ url_for('static', filename='js/gridstack.min.js') }}"></script>
+    <script type="text/javascript">
+        hljs.initHighlightingOnLoad();
+        $(function () {
+            $('.grid-stack').gridstack({
+                width: 12,
+                always_show_resize_hyesle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                resizable: {
+                    handles: 'e, se, s, sw, w'
+                }
+            });
+        });
+    </script>
+  {% block content_js %}
+  {% endblock %}
+</body>
 </html>

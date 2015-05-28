@@ -17,6 +17,9 @@ class RVIConsumer(threading.Thread):
         self.cons.seek(0,2)
         self.headers = {'Content-Type' : 'application/json'}
 
+    def is_running(self):
+        return self.flag
+        
     def run(self):
         while self.flag:
             
