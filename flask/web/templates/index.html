@@ -121,7 +121,7 @@
 					console.log('data is json: ' + json_data);
 					// console.log(json_data['data'][0]['value']['lat']);	
 					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);	
-					myLineChart.addData(data['data'][0]['speed'], data['timestamp']);
+					myLineChart.addData([json_data['data'][0]['value']['speed']], json_data['timestamp']);
 				}
 				catch(err) {
 					console.log('non-json data');
