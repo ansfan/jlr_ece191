@@ -52,7 +52,7 @@
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
-                Speed Chart
+                <canvas id="myChart"></canvas>
             </div>
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="7" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
@@ -71,6 +71,7 @@
 {% endblock %}
 
 {% block content_js %}
+	<script type="text/javascript" src="{{ url_for('static', filename='js/Chart/Chart.min.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
@@ -120,6 +121,7 @@
 					console.log('data is json: ' + json_data);
 					// console.log(json_data['data'][0]['value']['lat']);	
 					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);	
+					myLineChart.addData(data['data'][0]['speed'], data['timestamp']);
 				}
 				catch(err) {
 					console.log('non-json data');
@@ -157,5 +159,26 @@
 	        }
 	    });
 	});
+
+	var data = {
+	    labels: [],
+	    datasets: [
+	        {
+	            label: "Speed",
+	            fillColor: "rgba(220,220,220,0.2)",
+	            strokeColor: "rgba(220,220,220,1)",
+	            pointColor: "rgba(220,220,220,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(220,220,220,1)",
+	            data: []
+	        }
+	    ]
+	};
+
+  var ctx = document.getElementById("myChart").getContext("2d");
+  var myLineChart = new Chart(ctx).Line(data);
+  
+
 	</script>
 {% endblock %}
