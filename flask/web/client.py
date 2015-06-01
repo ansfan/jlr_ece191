@@ -216,7 +216,7 @@ def error_internalserver(error):
 #################
 @app.route('/', methods=['GET'])
 def login():
-	return render_template('templogin.html')
+	return render_template('login.html')
 
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -302,7 +302,14 @@ def webhook():
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-	return render_template('dashboard.html')
+
+	user = g.user
+
+	list_of_cars = parse.LoadCars(user.id)
+	
+	return render_template('dashboard.html',
+		user = user,
+		cars_list = list_of_cars)
 	
 @app.route('/logout', methods=['GET'])
 @login_required
