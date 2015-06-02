@@ -59,7 +59,7 @@
     ]
 };
   
-  //Chart.defaults.global.responsive = true;
+  Chart.defaults.global.responsive = true;
   var ctx = document.getElementById("myChart").getContext("2d");
   var myLineChart = new Chart(ctx).Line(data);
   myLineChart.addData([40, 60], "August");
