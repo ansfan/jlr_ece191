@@ -308,6 +308,8 @@ def webhook():
 @app.route('/history', methods=['GET', 'POST'])
 @app.route('/history/', methods=['GET', 'POST'])
 def history():
+	user = g.user
+
 	data = None
 	vin = None
 	if request.method == 'POST':
@@ -338,7 +340,8 @@ def history():
 
 	return render_template('history.html', 
 		data=data,
-		car=vin)
+		car=vin,
+		user=user)
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
