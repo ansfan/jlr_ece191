@@ -147,8 +147,8 @@ def load_user(userid):
 # Flask Settings #
 ##################
 app.config['SECRET_KEY'] = settings.SECRET_KEY
-app.config['DATABASE_HISTORY_URL'] = settings.RVI_DATABASE_URL + '/history/'
-app.config['DATABASE_WEBHOOK_URL'] = settings.RVI_DATABASE_URL + '/webhook/'
+app.config['DATABASE_HISTORY_URL'] = settings.RVI_DATABASE_URL + 'history/'
+app.config['DATABASE_WEBHOOK_URL'] = settings.RVI_DATABASE_URL + 'webhook/'
 app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 
 ######################
@@ -250,8 +250,6 @@ def index():
 	user = g.user
 
 	list_of_cars = parse.LoadCars(user.id)
-	if not list_of_cars:
-		list_of_cars = []
 
 	return render_template('index.html',
 		user = user,
@@ -312,6 +310,9 @@ def history():
 
 	data = None
 	vin = None
+
+	list_of_cars = parse.LoadCars(user.id)
+
 	if request.method == 'POST':
 		start_date = request.form['start_date']
 		end_date = request.form['end_date']
@@ -327,11 +328,9 @@ def history():
 		try:
 			print "Requesting historical data from " + start_date + " to " + end_date + " for vehicle " + car_selected
 			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
+			print r.text
 
-			resp_data = r.json()
-			print resp_data
-			data = resp_data['data']
-			vin = resp_data['vin']
+			str_rand = r.text
 
 		except Exception as e:
 			print "Error establishing connection to DB."
@@ -339,9 +338,10 @@ def history():
 			flash("Error establishing connection to DB.")
 
 	return render_template('history.html', 
-		data=data,
+		data=str_rand,
 		car=vin,
-		user=user)
+		user=user,
+		list_of_cars = list_of_cars)
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
