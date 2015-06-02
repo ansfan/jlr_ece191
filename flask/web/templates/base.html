@@ -39,10 +39,10 @@
                   {% for cars in cars_list %}
                   <li><a tabindex="-1" href="/car/{{cars.car_vin}}">{{cars.car_name}}</a></li>
                   {% else %}
-                  <li><a tabindex="-1">Unbelievable. No cars!</a></li>
+                  <li><a tabindex="-1">No cars!</a></li>
                   {% endfor %}
                   <li class="divider"></li>
-                  <li><a href="/add">Add a Vehicle...</a></li>
+                  <li><a href="/add">Add a Vehicle</a></li>
                 </ul>
               </li>
               <li><a href="/logout">Sign Out</a></li>
@@ -53,6 +53,7 @@
     </div>
   </nav>
 <!-- End of Navigation Bar -->
+
   {% block content %}
   {% endblock %}
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>

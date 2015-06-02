@@ -52,12 +52,17 @@
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
-                <canvas id="myChart"></canvas>
+                <canvas id="speedTime"></canvas>
             </div>
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="7" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
-                Altitude Chart
+                <canvas id="altitudeTime"></canvas>
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="8" data-gs-y="11" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
+            <div class="grid-stack-item-content">
+                <canvas id="trackingTime"></canvas>
             </div>
         </div>
     </div>
@@ -121,7 +126,10 @@
 					console.log('data is json: ' + json_data);
 					// console.log(json_data['data'][0]['value']['lat']);	
 					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);	
-					myLineChart.addData([json_data['data'][0]['value']['speed']], json_data['timestamp']);
+					speedTimeChart.addData([json_data['data'][0]['value']['speed']], json_data['timestamp']);
+					altitudeTimeChart.addData([json_data['data'][0]['value']['alt']], json_data['timestamp']);
+					trackingTimeChart.addData([json_data['data'][2]['value']['track']], json_data['timestamp']);
+
 				}
 				catch(err) {
 					console.log('non-json data');
@@ -160,11 +168,11 @@
 	    });
 	});
 
-	var data = {
+	var trackingTimedata = {
 	    labels: [],
 	    datasets: [
 	        {
-	            label: "Speed",
+	            label: "Tracking (Degrees)",
 	            fillColor: "rgba(220,220,220,0.2)",
 	            strokeColor: "rgba(220,220,220,1)",
 	            pointColor: "rgba(220,220,220,1)",
@@ -176,8 +184,47 @@
 	    ]
 	};
 
-  var ctx = document.getElementById("myChart").getContext("2d");
-  var myLineChart = new Chart(ctx).Line(data);
+	var altitudeTimedata = {
+	    labels: [],
+	    datasets: [
+	        {
+	            label: "Altitude (km)",
+	            fillColor: "rgba(220,220,220,0.2)",
+	            strokeColor: "rgba(220,220,220,1)",
+	            pointColor: "rgba(220,220,220,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(220,220,220,1)",
+	            data: []
+	        }
+	    ]
+	};
+
+	var speedTimedata = {
+	    labels: [],
+	    datasets: [
+	        {
+	            label: "Speed (km/s)",
+	            fillColor: "rgba(220,220,220,0.2)",
+	            strokeColor: "rgba(220,220,220,1)",
+	            pointColor: "rgba(220,220,220,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(220,220,220,1)",
+	            data: []
+	        }
+	    ]
+	};
+
+	Chart.defaults.global.responsive = true;
+  var speedTimectx = document.getElementById("speedTime").getContext("2d");
+  var speedTimeChart = new Chart(speedTimectx).Line(speedTimedata);
+
+  var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
+  var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata);
+
+  var trackingTimectx = document.getElementById("trackingTime").getContext("2d");
+  var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata);
   
 
 	</script>
