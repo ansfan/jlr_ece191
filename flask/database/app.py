@@ -134,14 +134,12 @@ def history():
 		data = request.get_json()
 
 		# implement error catcher http://flask.pocoo.org/docs/0.10/patterns/apierrors/
-		start_date = yyyymmddToEpoch(data['start'])
-		end_date = yyyymmddToEpoch(data['end'])
+		start_date = str(yyyymmddToEpoch(data['start']))
+		end_date = str(yyyymmddToEpoch(data['end']))
 		car_name = data['car']
-
 		table = RVIHBaseTable()
 		fat_array = table.query_by_date(car_name, start_date, end_date)
-
-		return fat_array
+		return str(fat_array)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8123)
