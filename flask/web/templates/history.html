@@ -16,29 +16,73 @@
 				{% endif %}
 			{% endwith %}
 		</p>
+		<div class="row">
+			<div class="col-xs-9 map-container">
+				<div id="map"></div>
+			</div>
+			<div class="col-xs-3">
+				<form method="POST">
+					Car name:<br>
+					<input type="text" name="car">
+					<br>
+					Start Date:<br>
+					<input type="date" name="start_date">
+					<br>
+					End Date:<br>
+					<input type="date" name="end_date">
+					<br><br>
+					<input type="submit" value="Submit">
+				</form>
 
-		<form method="POST">
-			Car name:<br>
-			<input type="text" name="car">
-			<br>
-			Start Date:<br>
-			<input type="date" name="start_date">
-			<br>
-			End Date:<br>
-			<input type="date" name="end_date">
-			<br><br>
-			<input type="submit" value="Submit">
-		</form>
-
-		<p id="car_name">
-			{% if car %}
-			{% endif %}
-		</p>
-		<p id="dump">
-			{% if data %}
-				{{data}}
-			{% endif %}
-		</p>
-
+				<p id="car_name">
+					{% if car %}
+					{% endif %}
+				</p>
+				<p id="dump">
+					{% if data %}
+						{{data}}
+					{% endif %}
+				</p>
+			</div>
+		</div>
 	</div>
+{% endblock %}
+
+{% block content_js %}
+	<script type="text/javascript" src="{{ url_for('static', filename='js/Chart/Chart.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
+	<script type="text/javascript" charset="utf-8">
+		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
+
+		var map = L.mapbox.map('map', 'mapbox.streets');
+
+		map.on('load', function(e) {
+			window.dispatchEvent(new Event('resize'));
+		});
+
+		map.setView([37, -122], 14);
+
+		{% if data %}
+		var marker = L.marker([37, -122], {
+			icon: L.mapbox.marker.icon({
+				'marker-color': '#f86767'
+			})
+		});
+
+		marker.addTo(map);
+
+		var data = {{data}};
+		
+		var i = 0;
+		window.setInterval(function() {
+			if (i < data.length) {
+				marker.setLatLng(L.latLng(parseFloat(data[i]['data'][0]['value']['lat']), parseFlat(data[i]['data'][0]['value']['lat'])));
+			}
+			
+			i += 1;
+		}, 250);
+
+		{% endif %}
+	});
+	</script>
 {% endblock %}
