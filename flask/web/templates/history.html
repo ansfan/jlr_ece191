@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block header %}
 	<title>History</title>
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/history.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -17,7 +20,7 @@
 			{% endwith %}
 		</p>
 		<div class="row">
-			<div class="col-xs-9 map-container">
+			<div class="col-xs-9">
 				<div id="map"></div>
 			</div>
 			<div class="col-xs-3">
@@ -49,8 +52,6 @@
 {% endblock %}
 
 {% block content_js %}
-	<script type="text/javascript" src="{{ url_for('static', filename='js/Chart/Chart.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 
@@ -83,6 +84,5 @@
 		}, 250);
 
 		{% endif %}
-	});
 	</script>
 {% endblock %}
