@@ -310,7 +310,7 @@ def history():
 
 	data = None
 	vin = None
-
+	
 	list_of_cars = parse.LoadCars(user.id)
 
 	if request.method == 'POST':
@@ -330,7 +330,7 @@ def history():
 			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
 			print r.text
 
-			str_rand = r.text
+			data = r.text
 
 		except Exception as e:
 			print "Error establishing connection to DB."
@@ -338,7 +338,7 @@ def history():
 			flash("Error establishing connection to DB.")
 
 	return render_template('history.html', 
-		data=str_rand,
+		data=data,
 		car=vin,
 		user=user,
 		list_of_cars = list_of_cars)
