@@ -328,11 +328,9 @@ def history():
 		try:
 			print "Requesting historical data from " + start_date + " to " + end_date + " for vehicle " + car_selected
 			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
+			print r.text
 
-			resp_data = r.json()
-			print resp_data
-			data = resp_data['data']
-			vin = resp_data['vin']
+			str_rand = r.text
 
 		except Exception as e:
 			print "Error establishing connection to DB."
@@ -340,7 +338,7 @@ def history():
 			flash("Error establishing connection to DB.")
 
 	return render_template('history.html', 
-		data=data,
+		data=str_rand,
 		car=vin,
 		user=user,
 		list_of_cars = list_of_cars)
