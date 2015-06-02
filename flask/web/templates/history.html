@@ -72,12 +72,21 @@
 
 		marker.addTo(map);
 
-		var data = {{data}};
-		
+		var data = '{{data|tojson}}';
+		data = JSON.parse(data);
+console.log(data);
+		data = data['payload'];
+		console.log(data);
+		console.log(data.length);
+		console.log(JSON.parse(data[0]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"')));	
 		var i = 0;
 		window.setInterval(function() {
 			if (i < data.length) {
-				marker.setLatLng(L.latLng(parseFloat(data[i]['data'][0]['value']['lat']), parseFlat(data[i]['data'][0]['value']['lat'])));
+				console.log(data[i]['data']);
+				temp = JSON.parse(data[i]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"'))[0];	
+				console.log(temp);
+				marker.setLatLng(L.latLng(parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])));
+				map.setView([parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])]);
 			}
 			
 			i += 1;

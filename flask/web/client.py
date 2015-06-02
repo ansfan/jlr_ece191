@@ -3,6 +3,7 @@ from flask.ext.socketio import SocketIO, emit
 import requests
 import json 
 import settings_client as settings
+import ast
 
 import logging
 logging.basicConfig()
@@ -25,6 +26,16 @@ socketio = SocketIO(app)
 # Importing database models #
 #############################
 import models
+
+####################
+# Global Functions #
+####################
+def convert_keys_to_string(dictionary):
+    """Recursively converts dictionary keys to strings."""
+    if not isinstance(dictionary, dict):
+        return dictionary
+    return dict((str(k), convert_keys_to_string(v)) 
+        for k, v in dictionary.items())
 
 ################
 # Google OAuth #
@@ -330,8 +341,14 @@ def history():
 			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
 			print r.text
 
-			data = r.text
+		#	data = convert_keys_to_string(r.json()['payload'])
+		#	data = r.tex.replace("u", "")
+		#	data = json.loads(data)
 
+			data = json.loads(r.text)
+			#data = data.replace("u","")
+		        #print data
+	
 		except Exception as e:
 			print "Error establishing connection to DB."
 			print e.message, e.args
