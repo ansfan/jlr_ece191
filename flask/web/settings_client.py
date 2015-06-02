@@ -2,7 +2,7 @@
 SECRET_KEY = 'secret!'
 
 # RVI
-RVI_DATABASE_WEBHOOK_URL = 'http://52.25.32.18:8123/webhook/'
+RVI_DATABASE_URL = 'http://52.25.32.18:8123/'
 RVI_FLASK_WEBHOOK_URL = 'http://52.24.215.226/webhook/'
 
 # Parse

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block header %}
+	<title>History</title>
+{% endblock %}
+
+{% block content %}
+	<div class="container-fluid darklue" id="page-top">
+		<p>
+			{% with messages = get_flashed_messages() %}
+				{% if messages %}
+					<ul class="flashes">
+						{% for message in messages %}
+							<li>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endwith %}
+		</p>
+
+		<form method="POST">
+			Car name:<br>
+			<input type="text" name="car">
+			<br>
+			Start Date:<br>
+			<input type="date" name="start_date">
+			<br>
+			End Date:<br>
+			<input type="date" name="end_date">
+			<br><br>
+			<input type="submit" value="Submit">
+		</form>
+
+		<p id="car_name">
+			{% if car %}
+			{% endif %}
+		</p>
+		<p id="dump">
+			{% if data %}
+			{% endif %}
+		</p>
+
+	</div>
+{% endblock %}
