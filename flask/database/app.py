@@ -18,6 +18,9 @@ def jsonifyCSData(data):
 	}
 	return result
 
+def yyyymmddToEpoch(wordDate):
+	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d")))
+	
 # Import data
 # testdata = []
 # with open('../cabspottingdata/new_abboip2.txt') as inputfile:
@@ -41,6 +44,8 @@ app.config['SECRET_KEY'] = 'secret!'
 from rviwebconsumer import RVIConsumer
 
 rvi_thread_pool = {}
+
+from hbasepull import RVIHBaseTable
 
 ####################
 # Celery Functions #
@@ -120,6 +125,21 @@ def webhook():
 		# 	print "Sent complete."
 
 	return "OK\n"
+
+@app.route('/history/', methods=['POST'])
+def history():
+	if request.method == 'POST':
+		print "Received data from " + request.remote_addr
+
+		data = request.get_json()
+
+		# implement error catcher http://flask.pocoo.org/docs/0.10/patterns/apierrors/
+		start_date = str(yyyymmddToEpoch(data['start']))
+		end_date = str(yyyymmddToEpoch(data['end']))
+		car_name = data['car']
+		table = RVIHBaseTable()
+		fat_array = table.query_by_date(car_name, start_date, end_date)
+		return str(fat_array)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8123)

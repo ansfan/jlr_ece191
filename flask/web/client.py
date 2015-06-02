@@ -147,7 +147,8 @@ def load_user(userid):
 # Flask Settings #
 ##################
 app.config['SECRET_KEY'] = settings.SECRET_KEY
-app.config['DATABASE_WEBHOOK_URL'] = settings.RVI_DATABASE_WEBHOOK_URL
+app.config['DATABASE_HISTORY_URL'] = settings.RVI_DATABASE_URL + 'history/'
+app.config['DATABASE_WEBHOOK_URL'] = settings.RVI_DATABASE_URL + 'webhook/'
 app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 
 ######################
@@ -219,6 +220,7 @@ def login():
 	return render_template('login.html')
 
 @app.route('/add', methods=['GET', 'POST'])
+@app.route('/add/', methods=['GET', 'POST'])
 @login_required
 def add_vehicle():
 	if request.method == 'POST':
@@ -242,19 +244,19 @@ def google_login():
 		_external=True))
 
 @app.route('/index', methods=['GET'])
+@app.route('/index/', methods=['GET'])
 @login_required
 def index():
 	user = g.user
 
 	list_of_cars = parse.LoadCars(user.id)
-	if not list_of_cars:
-		list_of_cars = []
 
 	return render_template('index.html',
 		user = user,
 		cars_list = list_of_cars)
 
 @app.route('/car/<vin>', methods=['GET'])
+@app.route('/car/<vin>/', methods=['GET'])
 @login_required
 def index_vehicle(vin):
 	user = g.user
@@ -270,19 +272,20 @@ def index_vehicle(vin):
 	try:
 		print "Sending data request to DB."
 		r = requests.post(app.config['DATABASE_WEBHOOK_URL'], data=json.dumps(payload), headers=headers)
+
+		create_namespace(vin)
 		
 	except Exception as e:
 		print "Error establishing connection to DB."
 		print e.message, e.args
-
-
-	create_namespace(vin)
+		flash("Error establishing connection to DB.")
 
 	return render_template('index.html',
 		user = user,
 		cars_list = list_of_cars,
 		car_namespace = vin)
 
+@app.route('/webhook', methods=['POST'])
 @app.route('/webhook/', methods=['POST'])
 def webhook():
 	if request.method == 'POST':
@@ -299,6 +302,46 @@ def webhook():
 		socketio.emit('my response', {'data': data}, namespace=vin)
 
 	return "OK"
+
+@app.route('/history', methods=['GET', 'POST'])
+@app.route('/history/', methods=['GET', 'POST'])
+def history():
+	user = g.user
+
+	data = None
+	vin = None
+	
+	list_of_cars = parse.LoadCars(user.id)
+
+	if request.method == 'POST':
+		start_date = request.form['start_date']
+		end_date = request.form['end_date']
+		car_selected = request.form['car']
+
+		headers = {'Content-Type': 'application/json'}
+		payload = {
+			'start' : start_date,
+			'end' : end_date,
+			'car' : car_selected
+		}
+
+		try:
+			print "Requesting historical data from " + start_date + " to " + end_date + " for vehicle " + car_selected
+			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
+			print r.text
+
+			data = r.text
+
+		except Exception as e:
+			print "Error establishing connection to DB."
+			print e.message, e.args
+			flash("Error establishing connection to DB.")
+
+	return render_template('history.html', 
+		data=data,
+		car=vin,
+		user=user,
+		list_of_cars = list_of_cars)
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():

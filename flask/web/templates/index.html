@@ -6,6 +6,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/gridstack.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
 	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
+	<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -42,7 +46,7 @@
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
-                Speedometer
+            	Unsure.
             </div>
         </div>
         <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
@@ -57,12 +61,21 @@
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="7" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
+<<<<<<< HEAD
                 <canvas id="altitudeTime"></canvas>
             </div>
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="11" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
                 <canvas id="trackingTime"></canvas>
+=======
+                	<div id="gauge">
+						<div id="circle"></div>
+						<div id="numbers"></div>
+						<div id="mi"></div>
+						<div id="needle"></div>
+					</div> 
+>>>>>>> b065dc34439480487e1941c24205b1a624caac8a
             </div>
         </div>
     </div>
@@ -112,6 +125,32 @@
 			// until `pointsAdded` reaches 360.
 			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
 		}
+	
+$(document).ready(function() {
+TweenLite.to(needle, 2, {rotation:-31,  transformOrigin:"bottom right"});
+
+
+	$('#miles').keyup(function() {
+		var mi = $(this).val();
+		var	miNum = parseInt(mi)
+
+		if ( (mi <= 75) && !isNaN(miNum) ){
+            var speedMi = miNum * 2 - 31;	
+            $('#numbers').css('text-align', 'center');  
+            $('#numbers').html(miNum.toFixed(0)); 
+            $('#mi').html('Mph');
+	   } else if (!isNaN(miNum)){ 
+	   		var speedMi = 215;
+	   		$('#numbers').css('text-align', 'right');
+            $('#numbers').html(miNum.toFixed(0)); 
+            $('#mi').html('Mph');  	
+	   }
+	
+		var needle = $("#needle");    
+		TweenLite.to(needle, 2, {rotation:speedMi,  transformOrigin:"bottom right"});
+	});
+	
+});
 	$(document).ready(function(){
 		{% if car_namespace %}
 			var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
