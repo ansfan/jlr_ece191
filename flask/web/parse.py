@@ -98,6 +98,19 @@ class parseRESTHandler:
 
 		return result['objectId']
 
+	# Delete cars
+	def DeleteCar(self, car_obj_id):
+		connection = httplib.HTTPSConnection('api.parse.com', 443)
+		connection.connect()
+		connection.request('DELETE', '/1/classes/carsDatabase/' + car_obj_id, '', {
+		       "X-Parse-Application-Id": self.APPLICATION_ID,
+		       "X-Parse-REST-API-Key": self.API_KEY
+		     })
+		result = json.loads(connection.getresponse().read())
+		self.printDebug('Car deleted.')
+
+		return True
+
 	# Load all cars owned by dude
 	def LoadCars(self, user_id):
 		connection = httplib.HTTPSConnection('api.parse.com', 443)
@@ -114,8 +127,28 @@ class parseRESTHandler:
 
 		try:
 			if result['results'] != []:
-				self.printDebug('result obj: ' + str(result['results']))
+				self.printDebug('All cars obj: ' + str(result['results']))
 				return result['results']
+
 		except KeyError:
 			self.printDebug('Parse: No cars found')
+			return False
+
+	# Load all users
+	def LoadAllUsers(self):
+		connection = httplib.HTTPSConnection('api.parse.com', 443)
+		connection.connect()
+		connection.request('GET', '/1/classes/mainDatabase', '', {
+			"X-Parse-Application-Id": self.APPLICATION_ID,
+			"X-Parse-REST-API-Key": self.API_KEY
+			 })
+
+		result = json.loads(connection.getresponse().read())
+
+		try:
+			if result['results'] != []:
+				self.printDebug('All users obj: ' + str(result['results']))
+				return result['results']
+		except KeyError:
+			self.printDebug('Parse: No users found')
 			return False
