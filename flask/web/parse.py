@@ -98,6 +98,19 @@ class parseRESTHandler:
 
 		return result['objectId']
 
+	# Delete cars
+	def DeleteCar(self, car_obj_id):
+		connection = httplib.HTTPSConnection('api.parse.com', 443)
+		connection.connect()
+		connection.request('DELETE', '/1/classes/carsDatabase/' + car_obj_id, '', {
+		       "X-Parse-Application-Id": self.APPLICATION_ID,
+		       "X-Parse-REST-API-Key": self.API_KEY
+		     })
+		result = json.loads(connection.getresponse().read())
+		self.printDebug('Car deleted.')
+		
+		return True
+
 	# Load all cars owned by dude
 	def LoadCars(self, user_id):
 		connection = httplib.HTTPSConnection('api.parse.com', 443)

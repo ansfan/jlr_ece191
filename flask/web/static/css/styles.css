@@ -47,8 +47,14 @@
     border-radius: 6px 0 6px 6px;
 }
 
-/*canvas {
-    width: 100% !important;
-    max-width: 800px;
-    height: auto !important;
-}*/
+.nav-cars-container>li {
+    display: flex;
+}
+
+.nav-cars-name {
+    width: 80%;
+}
+
+.nav-cars-delete {
+    width: 20%;
+}
