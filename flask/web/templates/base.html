@@ -42,7 +42,7 @@
                   <li><a tabindex="-1">No cars!</a></li>
                   {% endfor %}
                   <li class="divider"></li>
-                  <li><a href="/add">Add a Vehicle</a></li>
+                  <li><a href="#add" role= "button" data-toggle="modal" data-target="#modal-1">Add a Vehicle...</a></li>
                 </ul>
               </li>
               <li><a href="/logout">Sign Out</a></li>
@@ -56,6 +56,38 @@
 
   {% block content %}
   {% endblock %}
+  <!-- MODAL FOR REGISTERING -->
+  <div class="modal fade" id="modal-1" tabindex="-1" aria-labeledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"> &times; </button>
+          <h3 id="myModalLabel"class="modal-title">Add a Vehicle</h3>
+        </div>
+        <div class="modal-body">
+          <form id ="registerForm" method="POST" action="/add/"
+          novalidate="novalidate">
+            <fieldset>
+          
+              <input type="text" id="firstName" class="form-control chat-input"
+              name= "car_name" value="" required="" title="Please enter your car name" placeholder="Car Nickname">
+            </br>
+              <input type="text" id="lastName" class="form-control chat-input"
+              name= "car_vin" value="" required="" title="Please enter your car's VIN" placeholder="Car VIN">            
+            </br>
+            </fieldset>
+            <div class="modal-footer">
+              <button class="btn btn-info" data-dismiss="modal" aria-hidden="true">Cancel</button>
+              <button class="btn btn-success">Add Vehicle</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- END OF MODAL FOR REGISTERING -->
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-1.11.4.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.ui.touch-punch.min.js') }}"></script>
