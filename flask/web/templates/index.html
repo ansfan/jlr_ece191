@@ -56,6 +56,7 @@
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
+            	Speed vs. Time
                 <canvas id="speedTime"></canvas>
             </div>
         </div>
@@ -71,11 +72,13 @@
         </div>
         <div class="grid-stack-item" data-gs-x="8" data-gs-y="11" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
+            	Altitude vs. Time
                 <canvas id="altitudeTime"></canvas>
             </div>
         </div>
         <div class="grid-stack-item" data-gs-x="0" data-gs-y="10" data-gs-width="8" data-gs-height="4" data-gs-no-resize="yes">
             <div class="grid-stack-item-content">
+            	Tracking vs. Time
                 <canvas id="trackingTime"></canvas>
             </div>
         </div>
@@ -211,7 +214,7 @@ TweenLite.to(needle, 2, {rotation:-31,  transformOrigin:"bottom right"});
 	});
 
 	var speedTimedata = {
-	    labels: [0, 1],
+	    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
 	    datasets: [
 	        {
 	            label: "Speed (km/s)",
@@ -221,18 +224,13 @@ TweenLite.to(needle, 2, {rotation:-31,  transformOrigin:"bottom right"});
 	            pointStrokeColor: "#fff",
 	            pointHighlightFill: "#fff",
 	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1]
+	            data: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
 	        }
 	    ]
 	};
 
-Chart.defaults.global.responsive = true;
-  var speedTimectx = document.getElementById("speedTime").getContext("2d");
-  var speedTimeChart = new Chart(speedTimectx).Line(speedTimedata);
-  //speedTimeChart.resize();
-
-  var altitudeTimedata = {
-	    labels: [0, 1],
+	var altitudeTimedata = {
+	    labels: [0, 1, 2, 3],
 	    datasets: [
 	        {
 	            label: "Altitude (km)",
@@ -242,17 +240,13 @@ Chart.defaults.global.responsive = true;
 	            pointStrokeColor: "#fff",
 	            pointHighlightFill: "#fff",
 	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1]
+	            data: [0, 1, 0, 1]
 	        }
 	    ]
 	};
 
-  var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
-  var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata);
-  //altitudeTimeChart.resize();
-
-  var trackingTimedata = {
-	    labels: [0, 1],
+	var trackingTimedata = {
+	    labels: [0, 1, 2, 3],
 	    datasets: [
 	        {
 	            label: "Tracking (Degrees)",
@@ -262,25 +256,28 @@ Chart.defaults.global.responsive = true;
 	            pointStrokeColor: "#fff",
 	            pointHighlightFill: "#fff",
 	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1]
+	            data: [0, 1, 0, 1]
 	        }
 	    ]
 	};
 
 
+Chart.defaults.global.responsive = true;
+  var speedTimectx = document.getElementById("speedTime").getContext("2d");
+  var speedTimeChart = new Chart(speedTimectx).Line(speedTimedata,{animation: false});
 
-	// var width = $('canvas').parent().width();
-	// $('canvas').attr("width",width);
+  var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
+  var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata, {animation: false});
+
   var trackingTimectx = document.getElementById("trackingTime").getContext("2d");
-  var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata);
+  var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata, {animation: false});
 
-  // window.onresize = function(event){
-  //   var width = $('canvas').parent().width();
-  //   $('canvas').attr("width",width);
-  //   new Chart(ctx).Line(trackingTimedata);
-// };
-  //trackingTimeChart.resize();
-  
+  if (speedTimedata.labels.length > 20 || altitudeTimedata.length > 20 || trackingTimedata.length > 20) {
+  	speedTimeChart.removeData();
+  	altitudeTimeChart.removeData();
+  	trackingTimeChart.removeData();
+  }
+
 
 	</script>
 {% endblock %}
