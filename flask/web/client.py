@@ -223,8 +223,6 @@ def login():
 @app.route('/add/', methods=['POST'])
 @login_required
 def add_vehicle():
-	print request.method
-	print request.form
 	if request.method == 'POST':
 		car_name = request.form['car_name']
 		car_vin = request.form['car_vin']
@@ -251,6 +249,9 @@ def index():
 
 	list_of_cars = parse.LoadCars(user.id)
 
+	if list_of_cars == None:
+		list_of_cars = []
+		
 	return render_template('index.html',
 		user = user,
 		cars_list = list_of_cars)
