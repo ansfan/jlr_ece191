@@ -371,6 +371,19 @@ def dashboard():
 		user = user,
 		cars_list = list_of_cars)
 	
+@app.route('/delete/<obj>', methods=['GET'])
+@app.route('/delete/<obj>/', methods=['GET'])
+@login_required
+def delete_car(obj):
+	user = g.user
+	delete_result = parse.DeleteCar(obj)
+
+	list_of_cars = parse.LoadCars(user.id)
+
+	return render_template('index.html',
+		user = user,
+		cars_list = list_of_cars)
+
 @app.route('/logout', methods=['GET'])
 @login_required
 def logout():
