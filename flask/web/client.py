@@ -223,6 +223,8 @@ def login():
 @app.route('/add/', methods=['GET', 'POST'])
 @login_required
 def add_vehicle():
+	print request.method
+	print request.form
 	if request.method == 'POST':
 		car_name = request.form['car_name']
 		car_vin = request.form['car_vin']
