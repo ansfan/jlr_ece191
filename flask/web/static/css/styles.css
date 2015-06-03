@@ -58,3 +58,11 @@
 .nav-cars-delete {
     width: 20%;
 }
+
+.admin-cars {
+    padding-left: 5%;
+}
+
+.display-hidden {
+    display: none;
+}

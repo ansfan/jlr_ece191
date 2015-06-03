@@ -251,7 +251,7 @@ def index():
 
 	if list_of_cars == None:
 		list_of_cars = []
-		
+
 	return render_template('index.html',
 		user = user,
 		cars_list = list_of_cars)
@@ -364,6 +364,32 @@ def delete_car(obj):
 	flash('Your car is deleted.')
 
 	return redirect(url_for('index'))
+
+@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin/', methods=['GET', 'POST'])
+@login_required
+def admin_panel():
+	user = g.user
+
+	if user.is_admin():
+		print str(user) + ' is admin'
+
+		list_of_cars = parse.LoadCars(user.id)
+		all_users = parse.LoadAllUsers()
+
+		for users in all_users:
+			print 'this is users' + str(users)
+			users['cars_list'] = parse.LoadCars(users['objectId'])
+
+		return render_template('admin.html',
+			user = user,
+			cars_list = list_of_cars,
+			users_list = all_users)
+
+	else:
+		flash('That page is for admin only.')
+
+		return redirect(url_for('index'))
 
 @app.route('/logout', methods=['GET'])
 @login_required
