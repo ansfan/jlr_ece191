@@ -47,12 +47,14 @@
 							<tr>
 								<th>Car Name</th>
 								<th>Car VIN</th>
+								<th>View Stream</th>
 								<th>Delete?</th>
 							</tr>
 						{% for car in cars %}
 							<tr>
 								<td>{{ car.car_name }}</td>
 								<td>{{ car.car_vin }}</td>
+								<td><a href="/car/{{ car.car_vin }}">Stream</a></td>
 								<td><a href="/delete/{{ car.objectId }}">Delete {{ car.car_name }}</a></td>
 							</tr>
 						{% endfor %}
@@ -71,7 +73,7 @@
 {% block content_js %}
 	<script>
 		function toggleCars(car_id) {
-			$( '#' + car_id ).toggle("fast")
+			$( '#' + car_id ).toggle("fast");
 		}
 	</script>
 {% endblock %}
