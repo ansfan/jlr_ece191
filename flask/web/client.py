@@ -219,8 +219,8 @@ def error_internalserver(error):
 def login():
 	return render_template('login.html')
 
-@app.route('/add', methods=['GET', 'POST'])
-@app.route('/add/', methods=['GET', 'POST'])
+@app.route('/add', methods=['POST'])
+@app.route('/add/', methods=['POST'])
 @login_required
 def add_vehicle():
 	print request.method
@@ -235,8 +235,6 @@ def add_vehicle():
 			flash('Your car ' + car_name + ' is added!')
 
 		return redirect(url_for('index'))
-
-	return render_template('add.html')
 
 @app.route('/authhandler/loginGoogle')
 def google_login():
