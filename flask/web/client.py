@@ -358,14 +358,11 @@ def dashboard():
 @app.route('/delete/<obj>/', methods=['GET'])
 @login_required
 def delete_car(obj):
-	user = g.user
 	delete_result = parse.DeleteCar(obj)
 
-	list_of_cars = parse.LoadCars(user.id)
+	flash('Your car is deleted.')
 
-	return render_template('index.html',
-		user = user,
-		cars_list = list_of_cars)
+	return redirect(url_for('index'))
 
 @app.route('/logout', methods=['GET'])
 @login_required
