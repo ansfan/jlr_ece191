@@ -270,25 +270,25 @@ def index():
 		payload = {
 			'car_vins' : list_of_vin
 		}
-		try:
-			print "Sending last known request to DB."
-			r = requests.post(app.config['DATABASE_LASTPACKET_URL'], data=json.dumps(payload), headers=headers)
+		# try:
+		# 	print "Sending last known request to DB."
+		# 	r = requests.post(app.config['DATABASE_LASTPACKET_URL'], data=json.dumps(payload), headers=headers)
 
-			print r.text
+		# 	print r.text
 
-			list_of_timestamps = ast.literal_eval(r.text)
+		# 	list_of_timestamps = ast.literal_eval(r.text)
 
-			for car in list_of_cars:
-				for entry in data:
-					if (car['car_vin'] == entry[0]):
-						car['last_entry'] = entry[1]
+		# 	for car in list_of_cars:
+		# 		for entry in data:
+		# 			if (car['car_vin'] == entry[0]):
+		# 				car['last_entry'] = entry[1]
 
-			print 'EVERYTHING: ' + str(list_of_cars)
+		# 	print 'EVERYTHING: ' + str(list_of_cars)
 
-		except Exception as e:
-			print "Error establishing connection to DB."
-			print e.message, e.args
-			flash("Error establishing connection to DB.")
+		# except Exception as e:
+		# 	print "Error establishing connection to DB."
+		# 	print e.message, e.args
+		# 	flash("Error establishing connection to DB.")
 
 	else: 
 		list_of_vin = None

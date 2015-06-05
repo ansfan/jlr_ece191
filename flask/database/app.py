@@ -150,6 +150,8 @@ def latest():
 		print "Received request from " + request.remote_addr
 
 		data = request.get_json()
+
+		print 'List of Vins data: ' + data
 		list_of_vins = data['car_vins']
 
 		q = Queue.Queue()
