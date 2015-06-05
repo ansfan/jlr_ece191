@@ -16,9 +16,26 @@ class RVIHBaseTable:
         payload = []
         for key, data in self.hb_table.scan(row_start = start_key, row_stop = end_key):
             timestamp = key[len(vin):]
-            data['data'] = data.pop('car:data')
+            data['data'] = data.pop('car:data').replace("u'", "'")
             data['vin'] = vin
             data['timestamp'] = timestamp
             payload.append(data)
 
-        return payload
+        payloadtoweb = {}
+        payloadtoweb['payload'] = payload
+        payloadtoweb = json.dumps(payloadtoweb)        
+
+        return payloadtoweb
+
+    def max_date(self, vin):
+        
+        max_date = 0
+        #must iterate through the whole table and get the keys due to nosql
+        for key, data in self.hb_table.scan(row_prefix = vin):
+            timestamp = int(key[len(vin):])
+            if timestamp > max_date:
+                max_date = timestamp
+            else:
+                pass
+
+        return str(max_date)
