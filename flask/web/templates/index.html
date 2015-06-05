@@ -19,26 +19,17 @@
 	<h1>Hello, {{ user.first_name }}</h1>
 	<h4>Please select a vehicle.</h4>
 	<div class="row">
-		<a class="col-xs-12 col-md-4 btn">
-			<b>Car Nickname:</b> nickname<br>
-			<b>Car VIN:</b> VIN12312<br>
-			Last Movement: 4 days ago
-		</div>
-		<div class="col-xs-12 col-md-4">
-			<b>Car Nickname:</b> nickname<br>
-			<b>Car VIN:</b> VIN12312<br>
-			Last Movement: 4 days ago
-		</div>
-		<div class="col-xs-12 col-md-4">
-			<b>Car Nickname:</b> nickname<br>
-			<b>Car VIN:</b> VIN12312<br>
-			Last Movement: 4 days ago
-		</div>
-		<div class="col-xs-12 col-md-4">
-			<b>Car Nickname:</b> nickname<br>
-			<b>Car VIN:</b> VIN12312<br>
-			Last Movement: 4 days ago
-		</div>
+		{% if cars_list %}
+		{% for car in cars_list %}
+		<a class="col-xs-12 col-md-4 btn btn-default btn-lg" href="/car/{{car.car_vin}}">
+			<b>Car Nickname:</b>{{ car.car_name }}<br>
+			<b>Car VIN:</b>{{ car.car_vin }}<br>
+			Last Movement: Moments ago<!-- {{ car.last_entry }} -->
+		</a>
+		{% endfor %}
+		{% else %}
+		You have no cars!
+		{% endif %}
 	</div>
 
 {% endblock %}
