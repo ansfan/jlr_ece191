@@ -414,7 +414,7 @@ def history():
 		data=data,
 		car=vin,
 		user=user,
-		list_of_cars = list_of_cars)
+		cars_list=list_of_cars)
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
@@ -470,9 +470,9 @@ def admin_panel():
 					users['cars_list'] = data
 
 		return render_template('admin.html',
-			user = user,
-			cars_list = list_of_cars,
-			users_list = all_users)
+			user=user,
+			cars_list=list_of_cars,
+			users_list=all_users)
 
 	else:
 		flash('That page is for admin only.')

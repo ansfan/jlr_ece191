@@ -26,7 +26,17 @@
 			<div class="col-xs-3">
 				<form method="POST">
 					Car name:<br>
-					<input type="text" name="car">
+					<!-- <input type="text" name="car"> -->
+					<select name="car">
+						{% if cars_list %}
+						<option value="">Please select a car</option>
+						{% for car in cars_list %}
+						<option value="{{ car.car_vin }}">{{ car.car_name }}</option>
+						{% endfor %}
+						{% else %}
+						<option value="">You have no cars!</option>
+						{% endif %}
+					</select>
 					<br>
 					Start Date:<br>
 					<input type="date" name="start_date">
