@@ -5,6 +5,7 @@ import json
 import settings_client as settings
 import threading, Queue
 import logging
+import ast
 logging.basicConfig()
 
 #################
@@ -149,6 +150,7 @@ def load_user(userid):
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 app.config['DATABASE_HISTORY_URL'] = settings.RVI_DATABASE_URL + 'history/'
 app.config['DATABASE_WEBHOOK_URL'] = settings.RVI_DATABASE_URL + 'webhook/'
+app.config['DATABASE_LASTPACKET_URL'] = settings.RVI_DATABASE_URL + 'lastpacket/'
 app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 
 ######################
@@ -249,8 +251,37 @@ def index():
 
 	list_of_cars = parse.LoadCars(user.id)
 
-	if list_of_cars == None:
-		list_of_cars = []
+	list_of_vin = []
+	if list_of_cars:
+		for car in list_of_cars:
+			list_of_vin.append(car['car_vin'])
+
+		headers = {'Content-Type': 'application/json'}
+		payload = {
+			'car_vins' : list_of_vin
+		}
+		try:
+			print "Sending last known request to DB."
+			r = requests.post(app.config['DATABASE_LASTPACKET_URL'], data=json.dumps(payload), headers=headers)
+
+			print r.text
+
+			list_of_timestamps = ast.literal_eval(r.text)
+
+			for car in list_of_cars:
+				for entry in data:
+					if (car['car_vin'] == entry[0]):
+						car['last_entry'] = entry[1]
+
+			print 'EVERYTHING: ' + str(list_of_cars)
+
+		except Exception as e:
+			print "Error establishing connection to DB."
+			print e.message, e.args
+			flash("Error establishing connection to DB.")
+
+	else: 
+		list_of_vin = None
 
 	return render_template('index.html',
 		user = user,
@@ -281,7 +312,7 @@ def index_vehicle(vin):
 		print e.message, e.args
 		flash("Error establishing connection to DB.")
 
-	return render_template('index.html',
+	return render_template('dashboard.html',
 		user = user,
 		cars_list = list_of_cars,
 		car_namespace = vin)

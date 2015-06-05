@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block header %}
+
+  <title>Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">Speed vs. Time</h3>
+        </div>
+
+        <div class="panel-body">
+          <canvas id="myChart" width="600px" height="400px"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content_js %}
+
+  <script type="text/javascript" src="{{ url_for('static', filename='js/Chart.js/src/Chart.Line.js') }}"></script>
+  <script type="text/javascript">
+
+  var data = {
+    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+    datasets: [
+        {
+            label: "My First dataset",
+            fillColor: "rgba(220,220,220,0.2)",
+            strokeColor: "rgba(220,220,220,1)",
+            pointColor: "rgba(220,220,220,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+        },
+    ]
+};
+  
+  Chart.defaults.global.responsive = true;
+  var ctx = document.getElementById("myChart").getContext("2d");
+  var myLineChart = new Chart(ctx).Line(data, {showXLabels: 5});
+    
+  </script>
+{% endblock %}
