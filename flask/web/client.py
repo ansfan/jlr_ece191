@@ -3,7 +3,7 @@ from flask.ext.socketio import SocketIO, emit
 import requests
 import json 
 import settings_client as settings
-
+import threading, Queue
 import logging
 logging.basicConfig()
 
@@ -223,8 +223,6 @@ def login():
 @app.route('/add/', methods=['POST'])
 @login_required
 def add_vehicle():
-	print request.method
-	print request.form
 	if request.method == 'POST':
 		car_name = request.form['car_name']
 		car_vin = request.form['car_vin']
@@ -250,6 +248,9 @@ def index():
 	user = g.user
 
 	list_of_cars = parse.LoadCars(user.id)
+
+	if list_of_cars == None:
+		list_of_cars = []
 
 	return render_template('index.html',
 		user = user,
@@ -354,6 +355,58 @@ def dashboard():
 		user = user,
 		cars_list = list_of_cars)
 	
+@app.route('/delete/<obj>', methods=['GET'])
+@app.route('/delete/<obj>/', methods=['GET'])
+@login_required
+def delete_car(obj):
+	delete_result = parse.DeleteCar(obj)
+
+	flash('Your car is deleted.')
+
+	return redirect(url_for('index'))
+
+@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin/', methods=['GET', 'POST'])
+@login_required
+def admin_panel():
+	user = g.user
+
+	if user.is_admin():
+		print str(user) + ' is admin'
+
+		list_of_cars = parse.LoadCars(user.id)
+		all_users = parse.LoadAllUsers()
+		list_of_ids = []
+		for users in all_users:
+			print 'this is users' + str(users)
+			list_of_ids.append(users['objectId'])
+
+		q = Queue.Queue()
+		threads = [threading.Thread(target=parse.LoadCarsWrapper, args=(user_id,q)) for user_id in list_of_ids]
+
+		for thread in threads:
+			thread.start()
+
+		for thread in threads:
+			thread.join()
+
+		for i in range(len(all_users)):
+			data = q.get()
+			print data
+			for users in all_users:
+				if (data != None and users['objectId'] == data[0]['account']):
+					users['cars_list'] = data
+
+		return render_template('admin.html',
+			user = user,
+			cars_list = list_of_cars,
+			users_list = all_users)
+
+	else:
+		flash('That page is for admin only.')
+
+		return redirect(url_for('index'))
+
 @app.route('/logout', methods=['GET'])
 @login_required
 def logout():

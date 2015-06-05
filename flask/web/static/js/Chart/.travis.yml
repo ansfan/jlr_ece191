@@ -8,6 +8,3 @@ before_script:
 
 script:
   - gulp test
-
-notifications:
-  slack: chartjs:pcfCZR6ugg5TEcaLtmIfQYuA
