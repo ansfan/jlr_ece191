@@ -152,3 +152,6 @@ class parseRESTHandler:
 		except KeyError:
 			self.printDebug('Parse: No users found')
 			return False
+
+	def LoadCarsWrapper(self, user_id, output):
+		output.put(self.LoadCars(user_id))

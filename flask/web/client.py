@@ -3,7 +3,7 @@ from flask.ext.socketio import SocketIO, emit
 import requests
 import json 
 import settings_client as settings
-
+import threading, Queue
 import logging
 logging.basicConfig()
 
@@ -376,10 +376,26 @@ def admin_panel():
 
 		list_of_cars = parse.LoadCars(user.id)
 		all_users = parse.LoadAllUsers()
-
+		list_of_ids = []
 		for users in all_users:
 			print 'this is users' + str(users)
-			users['cars_list'] = parse.LoadCars(users['objectId'])
+			list_of_ids.append(users['objectId'])
+
+		q = Queue.Queue()
+		threads = [threading.Thread(target=parse.LoadCarsWrapper, args=(user_id,q)) for user_id in list_of_ids]
+
+		for thread in threads:
+			thread.start()
+
+		for thread in threads:
+			thread.join()
+
+		for i in range(len(all_users)):
+			data = q.get()
+			print data
+			for users in all_users:
+				if (data != None and users['objectId'] == data[0]['account']):
+					users['cars_list'] = data
 
 		return render_template('admin.html',
 			user = user,
