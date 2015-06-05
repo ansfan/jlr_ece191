@@ -6,6 +6,7 @@ import settings_client as settings
 import threading, Queue
 import logging
 import ast
+from datetime import datetime
 logging.basicConfig()
 
 #################
@@ -31,11 +32,42 @@ import models
 # Global Functions #
 ####################
 def convert_keys_to_string(dictionary):
-    """Recursively converts dictionary keys to strings."""
-    if not isinstance(dictionary, dict):
-        return dictionary
-    return dict((str(k), convert_keys_to_string(v)) 
-        for k, v in dictionary.items())
+	"""Recursively converts dictionary keys to strings."""
+	if not isinstance(dictionary, dict):
+		return dictionary
+	return dict((str(k), convert_keys_to_string(v)) for k, v in dictionary.items())
+
+def pretty_date(time):
+	now = datetime.now()
+	diff = now - datetime.fromtimestamp(time)
+	second_diff = diff.seconds
+	day_diff = diff.days
+
+	if day_diff < 0:
+		return ''
+
+	elif day_diff == 0:
+		if second_diff < 10:
+			return "just now"
+		if second_diff < 60:
+			return str(second_diff) + " seconds ago"
+		if second_diff < 120:
+			return "a minute ago"
+		if second_diff < 3600:
+			return str(second_diff / 60) + " minutes ago"
+		if second_diff < 7200:
+			return "an hour ago"
+		if second_diff < 86400:
+			return str(second_diff / 3600) + " hours ago"
+	if day_diff == 1:
+		return "Yesterday"
+	if day_diff < 7:
+		return str(day_diff) + " days ago"
+	if day_diff < 31:
+		return str(day_diff / 7) + " weeks ago"
+	if day_diff < 365:
+		return str(day_diff / 30) + " months ago"
+	return str(day_diff / 365) + " years ago"
 
 ################
 # Google OAuth #
@@ -270,25 +302,31 @@ def index():
 		payload = {
 			'car_vins' : list_of_vin
 		}
-		# try:
-		# 	print "Sending last known request to DB."
-		# 	r = requests.post(app.config['DATABASE_LASTPACKET_URL'], data=json.dumps(payload), headers=headers)
+		try:
+			print "Sending last known request to DB."
+			r = requests.post(app.config['DATABASE_LASTPACKET_URL'], data=json.dumps(payload), headers=headers)
 
-		# 	print r.text
+			print r.text
 
-		# 	list_of_timestamps = ast.literal_eval(r.text)
+			list_of_timestamps = ast.literal_eval(r.text)
+			
+			print list_of_timestamps
+			list_of_timestamps = list_of_timestamps['result']			
 
-		# 	for car in list_of_cars:
-		# 		for entry in data:
-		# 			if (car['car_vin'] == entry[0]):
-		# 				car['last_entry'] = entry[1]
+			for car in list_of_cars:
+				for entry in list_of_timestamps:
+					if (car['car_vin'] == entry[0]):
+						if (entry[1] is not '0'):
+							car['last_entry'] = pretty_date(int(entry[1]))
+						else:
+							car['last_entry'] = 'No Data'
 
-		# 	print 'EVERYTHING: ' + str(list_of_cars)
+			print 'EVERYTHING: ' + str(list_of_cars)
 
-		# except Exception as e:
-		# 	print "Error establishing connection to DB."
-		# 	print e.message, e.args
-		# 	flash("Error establishing connection to DB.")
+		except Exception as e:
+			print "Error establishing connection to DB."
+			print e.message, e.args
+			flash("Error establishing connection to DB.")
 
 	else: 
 		list_of_vin = None
@@ -331,7 +369,6 @@ def index_vehicle(vin):
 @app.route('/webhook/', methods=['POST'])
 def webhook():
 	if request.method == 'POST':
-		# avail_count['key1'] = request.remote_addr
 		print "Received info from " + request.remote_addr
 		data = request.get_json()
 		
@@ -372,13 +409,7 @@ def history():
 			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
 			print r.text
 
-		#	data = convert_keys_to_string(r.json()['payload'])
-		#	data = r.tex.replace("u", "")
-		#	data = json.loads(data)
-
 			data = json.loads(r.text)
-			#data = data.replace("u","")
-		        #print data
 	
 		except Exception as e:
 			print "Error establishing connection to DB."

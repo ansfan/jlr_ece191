@@ -24,7 +24,7 @@
 		<a class="col-xs-12 col-md-4 btn btn-default btn-lg" href="/car/{{car.car_vin}}">
 			<b>Car Nickname:</b>{{ car.car_name }}<br>
 			<b>Car VIN:</b>{{ car.car_vin }}<br>
-			Last Movement: Moments ago<!-- {{ car.last_entry }} -->
+			Last Movement: {{ car.last_entry }}
 		</a>
 		{% endfor %}
 		{% else %}
