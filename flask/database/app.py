@@ -4,6 +4,7 @@ import requests
 from celery import Celery
 import json
 import settings_app as settings
+import threading
 
 ##########################
 # Self-Defined Functions #
@@ -42,10 +43,13 @@ app.config['SECRET_KEY'] = 'secret!'
 # RVI Settings #
 ################
 from rviwebconsumer import RVIConsumer
-
 rvi_thread_pool = {}
 
-from hbasepull import RVIHBaseTable
+import hbasepull
+hbasetable = hbasepull.RVIHBaseTable()
+
+def maxDateWrapper(vin, output):
+	output.put([vin, hbasetable.max_date(vin)])
 
 ####################
 # Celery Functions #
@@ -137,9 +141,31 @@ def history():
 		start_date = str(yyyymmddToEpoch(data['start']))
 		end_date = str(yyyymmddToEpoch(data['end']))
 		car_name = data['car']
-		table = RVIHBaseTable()
-		fat_array = table.query_by_date(car_name, start_date, end_date)
+		fat_array = hbasetable.query_by_date(car_name, start_date, end_date)
 		return str(fat_array)
+
+@app.route('/lastpacket/', methods=['POST'])
+def latest():
+	if request.method == 'POST':
+		print "Received request from " + request.remote_addr
+
+		data = request.get_json()
+		list_of_vins = data['car_vins']
+
+		q = Queue.Queue()
+		threads = [threading.Thread(target=maxDateWrapper, args=(vin,q)) for vin in list_of_vins]
+
+		for thread in threads:
+			thread.start()
+
+		for thread in threads:
+			thread.join()
+
+		result = []
+		for i in range(len(list_of_vins)):
+			result.append(q.get())
+
+		return result
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8123)

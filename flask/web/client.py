@@ -3,9 +3,9 @@ from flask.ext.socketio import SocketIO, emit
 import requests
 import json 
 import settings_client as settings
-import ast
-
+import threading, Queue
 import logging
+import ast
 logging.basicConfig()
 
 #################
@@ -160,6 +160,7 @@ def load_user(userid):
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 app.config['DATABASE_HISTORY_URL'] = settings.RVI_DATABASE_URL + 'history/'
 app.config['DATABASE_WEBHOOK_URL'] = settings.RVI_DATABASE_URL + 'webhook/'
+app.config['DATABASE_LASTPACKET_URL'] = settings.RVI_DATABASE_URL + 'lastpacket/'
 app.config['FLASK_WEBHOOK_URL'] = settings.RVI_FLASK_WEBHOOK_URL
 
 ######################
@@ -260,9 +261,38 @@ def index():
 
 	list_of_cars = parse.LoadCars(user.id)
 
-	if list_of_cars == None:
-		list_of_cars = []
-		
+	list_of_vin = []
+	if list_of_cars:
+		for car in list_of_cars:
+			list_of_vin.append(car['car_vin'])
+
+		headers = {'Content-Type': 'application/json'}
+		payload = {
+			'car_vins' : list_of_vin
+		}
+		try:
+			print "Sending last known request to DB."
+			r = requests.post(app.config['DATABASE_LASTPACKET_URL'], data=json.dumps(payload), headers=headers)
+
+			print r.text
+
+			list_of_timestamps = ast.literal_eval(r.text)
+
+			for car in list_of_cars:
+				for entry in data:
+					if (car['car_vin'] == entry[0]):
+						car['last_entry'] = entry[1]
+
+			print 'EVERYTHING: ' + str(list_of_cars)
+
+		except Exception as e:
+			print "Error establishing connection to DB."
+			print e.message, e.args
+			flash("Error establishing connection to DB.")
+
+	else: 
+		list_of_vin = None
+
 	return render_template('index.html',
 		user = user,
 		cars_list = list_of_cars)
@@ -292,7 +322,7 @@ def index_vehicle(vin):
 		print e.message, e.args
 		flash("Error establishing connection to DB.")
 
-	return render_template('index.html',
+	return render_template('dashboard.html',
 		user = user,
 		cars_list = list_of_cars,
 		car_namespace = vin)
@@ -381,6 +411,48 @@ def delete_car(obj):
 	flash('Your car is deleted.')
 
 	return redirect(url_for('index'))
+
+@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin/', methods=['GET', 'POST'])
+@login_required
+def admin_panel():
+	user = g.user
+
+	if user.is_admin():
+		print str(user) + ' is admin'
+
+		list_of_cars = parse.LoadCars(user.id)
+		all_users = parse.LoadAllUsers()
+		list_of_ids = []
+		for users in all_users:
+			print 'this is users' + str(users)
+			list_of_ids.append(users['objectId'])
+
+		q = Queue.Queue()
+		threads = [threading.Thread(target=parse.LoadCarsWrapper, args=(user_id,q)) for user_id in list_of_ids]
+
+		for thread in threads:
+			thread.start()
+
+		for thread in threads:
+			thread.join()
+
+		for i in range(len(all_users)):
+			data = q.get()
+			print data
+			for users in all_users:
+				if (data != None and users['objectId'] == data[0]['account']):
+					users['cars_list'] = data
+
+		return render_template('admin.html',
+			user = user,
+			cars_list = list_of_cars,
+			users_list = all_users)
+
+	else:
+		flash('That page is for admin only.')
+
+		return redirect(url_for('index'))
 
 @app.route('/logout', methods=['GET'])
 @login_required

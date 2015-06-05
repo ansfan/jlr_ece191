@@ -1,19 +1,10 @@
 {% extends "base.html" %}
 {% block header %}
 	<title>Index</title>
-	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
-	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/gridstack.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
-	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
-	<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid darklue" id="page-top">
+<div class="container" id="page-top">
 	<p>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
@@ -25,262 +16,32 @@
 			{% endif %}
 		{% endwith %}
 	</p>
-	<div class="grid-stack" data-gs-width="12">
-        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="10" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content map-container">
-				<div id="map"></div>
-				<div id="map-info">
-					<div class="row">
-						<div class="col-xs-4">
-							<div id="timestamp-gps" class="map-text">GPS time</div>
-						</div>
-						<div class="col-xs-4">
-							<div id="timestamp-delta" class="map-text">Delta</div>
-						</div>
-						<div class="col-xs-4">
-							<div id="timestamp-current" class="map-text">Current time</div>
-						</div>
-					</div>
-				</div>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-            	Unsure.
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-                Altitude Text
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-                <canvas id="speedTime"></canvas>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="7" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-                	<div id="gauge">
-						<div id="circle"></div>
-						<div id="numbers"></div>
-						<div id="mi"></div>
-						<div id="needle"></div>
-					</div> 
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="11" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-                <canvas id="altitudeTime"></canvas>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="0" data-gs-y="10" data-gs-width="8" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-                <canvas id="trackingTime"></canvas>
-            </div>
-        </div>
-        
-    </div>
-    <div class="scroll-top page-scroll visible-xs visble-sm">
-        <a class="btn btn-primary" href="#page-top">
-            <i class="fa fa-chevron-up"></i>
-        </a>
-    </div>
-    <div id="log"></div>
-    <p></p>
-</div>
+	<h1>Hello, {{ user.first_name }}</h1>
+	<h4>Please select a vehicle.</h4>
+	<div class="row">
+		<a class="col-xs-12 col-md-4 btn">
+			<b>Car Nickname:</b> nickname<br>
+			<b>Car VIN:</b> VIN12312<br>
+			Last Movement: 4 days ago
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<b>Car Nickname:</b> nickname<br>
+			<b>Car VIN:</b> VIN12312<br>
+			Last Movement: 4 days ago
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<b>Car Nickname:</b> nickname<br>
+			<b>Car VIN:</b> VIN12312<br>
+			Last Movement: 4 days ago
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<b>Car Nickname:</b> nickname<br>
+			<b>Car VIN:</b> VIN12312<br>
+			Last Movement: 4 days ago
+		</div>
+	</div>
+
 {% endblock %}
 
 {% block content_js %}
-	<script type="text/javascript" src="{{ url_for('static', filename='js/Chart/Chart.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/socketio.min.js') }}"></script>
-	<script type="text/javascript" charset="utf-8">
-		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
-
-		var map = L.mapbox.map('map', 'mapbox.streets');
-
-		map.on('load', function(e) {
-			window.dispatchEvent(new Event('resize'));
-		});
-
-		map.setView([37, -122], 14);
-
-		// Add a new line to the map with no points.
-		var polyline = L.polyline([]).addTo(map);
-
-		// Keep a tally of how many points we've added to the map.
-		var pointsAdded = 0;
-
-		// Start drawing the polyline.
-		 // add();
-
-		function point_add(car_lat, car_long) {
-			console.log('car_lat: ' + car_lat + ', car_long: ' + car_long);
-			// `addLatLng` takes a new latLng coordinate and puts it at the end of the
-			// line. You optionally pull points from your data or generate them. Here
-			// we make a sine wave with some math.
-			polyline.addLatLng(L.latLng(parseFloat(car_lat), parseFloat(car_long)));
-			console.log('added line point');
-			// Pan the map along with where the line is being added.
-			map.setView([car_lat, car_long], 14);
-			console.log('shifted map view');
-			// Continue to draw and pan the map by calling `add()`
-			// until `pointsAdded` reaches 360.
-			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
-		}
-	
-$(document).ready(function() {
-TweenLite.to(needle, 2, {rotation:-31,  transformOrigin:"bottom right"});
-
-
-	$('#miles').keyup(function() {
-		var mi = $(this).val();
-		var	miNum = parseInt(mi)
-
-		if ( (mi <= 75) && !isNaN(miNum) ){
-            var speedMi = miNum * 2 - 31;	
-            $('#numbers').css('text-align', 'center');  
-            $('#numbers').html(miNum.toFixed(0)); 
-            $('#mi').html('Mph');
-	   } else if (!isNaN(miNum)){ 
-	   		var speedMi = 215;
-	   		$('#numbers').css('text-align', 'right');
-            $('#numbers').html(miNum.toFixed(0)); 
-            $('#mi').html('Mph');  	
-	   }
-	
-		var needle = $("#needle");    
-		TweenLite.to(needle, 2, {rotation:speedMi,  transformOrigin:"bottom right"});
-	});
-	
-});
-	$(document).ready(function(){
-		{% if car_namespace %}
-			var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
-
-			socket.on('my response', function(msg) {
-				data = msg.data;
-				console.log('init: ' + data);
-				
-				try {
-					var json_data = JSON.parse(data);
-					
-					console.log('data is json: ' + json_data);
-					// console.log(json_data['data'][0]['value']['lat']);	
-					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);
-					speedTimeChart.addData([json_data['data'][0]['value']['speed']], json_data['timestamp']);
-					altitudeTimeChart.addData([json_data['data'][0]['value']['alt']], json_data['timestamp']);
-					trackingTimeChart.addData([json_data['data'][2]['value']['track']], json_data['timestamp']);
-
-				}
-				catch(err) {
-					console.log('non-json data');
-				}
-
-				$('#log').append('<p>' + data + '</p>');
-			});
-
-			// init rvi connection
-			socket.emit('car request', {data: '{{ car_namespace }}' });
-		{% endif %}
-		// $('form#emit').submit(function(event) {
-		// 	socket.emit('car request', {data: $('#emit_data').val()});
-		// 	return false;
-		// });
-		// $('form#broadcast').submit(function(event) {
-		// 	socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
-		// 	return false;
-		// });
-	});
-	</script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/current_time.js') }}"></script>
-	<script>
-		startTime("timestamp-current");
-	</script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
-	<script src="{{ url_for('static', filename='js/gridstack.min.js') }}"></script>
-	<script type="text/javascript">
-	$(function () {
-	    $('.grid-stack').gridstack({
-	        width: 12,
-	        always_show_resize_hyesle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-	        resizable: {
-	            handles: 'e, se, s, sw, w'
-	        }
-	    });
-	});
-
-	var speedTimedata = {
-	    labels: [0, 1],
-	    datasets: [
-	        {
-	            label: "Speed (km/s)",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1]
-	        }
-	    ]
-	};
-
-Chart.defaults.global.responsive = true;
-  var speedTimectx = document.getElementById("speedTime").getContext("2d");
-  var speedTimeChart = new Chart(speedTimectx).Line(speedTimedata);
-  //speedTimeChart.resize();
-
-  var altitudeTimedata = {
-	    labels: [0, 1],
-	    datasets: [
-	        {
-	            label: "Altitude (km)",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1]
-	        }
-	    ]
-	};
-
-  var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
-  var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata);
-  //altitudeTimeChart.resize();
-
-  var trackingTimedata = {
-	    labels: [0, 1],
-	    datasets: [
-	        {
-	            label: "Tracking (Degrees)",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1]
-	        }
-	    ]
-	};
-
-
-
-	// var width = $('canvas').parent().width();
-	// $('canvas').attr("width",width);
-  var trackingTimectx = document.getElementById("trackingTime").getContext("2d");
-  var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata);
-
-  // window.onresize = function(event){
-  //   var width = $('canvas').parent().width();
-  //   $('canvas').attr("width",width);
-  //   new Chart(ctx).Line(trackingTimedata);
-// };
-  //trackingTimeChart.resize();
-  
-
-	</script>
 {% endblock %}

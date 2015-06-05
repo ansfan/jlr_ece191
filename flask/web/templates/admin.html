@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block header %}
+	<title>Admin</title>
+{% endblock %}
+
+{% block content %}
+<div class="container" id="page-top">
+	<p>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class="flashes">
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+	</p>
+	<h1>Admin Panel</h1>
+	<h4>Here you may view all registered users and the vehicles they are currently registered with.</h4>
+	<div class="row">
+		<div class="col-xs-12">
+			<table class="table table-hover admin-users-table">
+				<tr>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Vehicles</th>
+				</tr>
+				{% if users_list %}
+				{% for users in users_list %}
+				<tr>
+					<td>{{ users.first_name }}</td>
+					<td>{{ users.last_name }}</td>
+					<td>{{ users.email }}</td>
+					{% if users.cars_list %}
+					<td><a href="#showcars" onclick="toggleCars('{{ users.objectId }}')">Show Vehicles</a></td>
+					{% else %}
+					<td>No Vehicles</td>
+					{% endif %}
+				</tr>
+				{% with cars = users.cars_list %}
+				{% if cars %}
+				<tr id="{{ users.objectId }}" class="display-hidden">
+					<td colspan="4" class="admin-cars">
+						<table class="table table-hover table-condensed">
+							<tr>
+								<th>Car Name</th>
+								<th>Car VIN</th>
+								<th>View Stream</th>
+								<th>Delete?</th>
+							</tr>
+						{% for car in cars %}
+							<tr>
+								<td>{{ car.car_name }}</td>
+								<td>{{ car.car_vin }}</td>
+								<td><a href="/car/{{ car.car_vin }}">Stream</a></td>
+								<td><a href="/delete/{{ car.objectId }}">Delete {{ car.car_name }}</a></td>
+							</tr>
+						{% endfor %}
+						</table>
+					</td>
+				</tr>
+				{% endif %}
+				{% endwith %}
+				{% endfor %}
+				{% endif %}
+			</table>
+		</div>
+	</div>
+{% endblock %}
+
+{% block content_js %}
+	<script>
+		function toggleCars(car_id) {
+			$( '#' + car_id ).toggle("fast");
+		}
+	</script>
+{% endblock %}

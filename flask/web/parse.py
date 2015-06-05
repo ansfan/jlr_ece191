@@ -108,7 +108,7 @@ class parseRESTHandler:
 		     })
 		result = json.loads(connection.getresponse().read())
 		self.printDebug('Car deleted.')
-		
+
 		return True
 
 	# Load all cars owned by dude
@@ -127,8 +127,31 @@ class parseRESTHandler:
 
 		try:
 			if result['results'] != []:
-				self.printDebug('result obj: ' + str(result['results']))
+				self.printDebug('All cars obj: ' + str(result['results']))
 				return result['results']
+
 		except KeyError:
 			self.printDebug('Parse: No cars found')
 			return False
+
+	# Load all users
+	def LoadAllUsers(self):
+		connection = httplib.HTTPSConnection('api.parse.com', 443)
+		connection.connect()
+		connection.request('GET', '/1/classes/mainDatabase', '', {
+			"X-Parse-Application-Id": self.APPLICATION_ID,
+			"X-Parse-REST-API-Key": self.API_KEY
+			 })
+
+		result = json.loads(connection.getresponse().read())
+
+		try:
+			if result['results'] != []:
+				self.printDebug('All users obj: ' + str(result['results']))
+				return result['results']
+		except KeyError:
+			self.printDebug('Parse: No users found')
+			return False
+
+	def LoadCarsWrapper(self, user_id, output):
+		output.put(self.LoadCars(user_id))
