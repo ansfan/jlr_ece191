@@ -5,6 +5,7 @@ from celery import Celery
 import json
 import settings_app as settings
 import threading
+import Queue
 
 ##########################
 # Self-Defined Functions #
@@ -49,6 +50,7 @@ import hbasepull
 hbasetable = hbasepull.RVIHBaseTable()
 
 def maxDateWrapper(vin, output):
+	print "Vin is type: " + str(type(vin))
 	output.put([vin, hbasetable.max_date(vin)])
 
 ####################
@@ -151,11 +153,15 @@ def latest():
 
 		data = request.get_json()
 
-		print 'List of Vins data: ' + data
+		print 'List of Vins data: ' + str(data)
 		list_of_vins = data['car_vins']
-
+	
+		for vin in list_of_vins:
+			print vin
+	
+		print 'Parsed: ' + str(list_of_vins)
 		q = Queue.Queue()
-		threads = [threading.Thread(target=maxDateWrapper, args=(vin,q)) for vin in list_of_vins]
+		threads = [threading.Thread(target=maxDateWrapper, args=(str(vin),q)) for vin in list_of_vins]
 
 		for thread in threads:
 			thread.start()
@@ -165,9 +171,14 @@ def latest():
 
 		result = []
 		for i in range(len(list_of_vins)):
-			result.append(q.get())
+			data = q.get()
+			print data
+			result.append(data)
 
-		return result
+		return_payload = {
+			'result': result
+		}
+		return result_payload
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8123)

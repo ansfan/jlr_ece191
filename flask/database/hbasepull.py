@@ -30,12 +30,14 @@ class RVIHBaseTable:
     def max_date(self, vin):
         
         max_date = 0
+        try: 
         #must iterate through the whole table and get the keys due to nosql
-        for key, data in self.hb_table.scan(row_prefix = vin):
-            timestamp = int(key[len(vin):])
-            if timestamp > max_date:
-                max_date = timestamp
-            else:
-                pass
-
-        return str(max_date)
+            for key, data in self.hb_table.scan(row_prefix = vin):
+                timestamp = int(key[len(vin):])
+                if timestamp > max_date:
+                    max_date = timestamp
+                else:
+                    pass
+            return str(max_date)
+        except Exception as e:
+            print 'Could not get car info with error ', e
