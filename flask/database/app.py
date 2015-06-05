@@ -4,8 +4,6 @@ import requests
 from celery import Celery
 import json
 import settings_app as settings
-import threading
-import Queue
 
 ##########################
 # Self-Defined Functions #
@@ -50,7 +48,6 @@ import hbasepull
 hbasetable = hbasepull.RVIHBaseTable()
 
 def maxDateWrapper(vin, output):
-	print "Vin is type: " + str(type(vin))
 	output.put([vin, hbasetable.max_date(vin)])
 
 ####################
@@ -159,26 +156,15 @@ def latest():
 		for vin in list_of_vins:
 			print vin
 	
-		print 'Parsed: ' + str(list_of_vins)
-		q = Queue.Queue()
-		threads = [threading.Thread(target=maxDateWrapper, args=(str(vin),q)) for vin in list_of_vins]
-
-		for thread in threads:
-			thread.start()
-
-		for thread in threads:
-			thread.join()
-
 		result = []
-		for i in range(len(list_of_vins)):
-			data = q.get()
-			print data
-			result.append(data)
-
+		for vin in list_of_vins:
+			vin = str(vin)
+			result.append([vin, hbasetable.max_date(vin)])
+		
 		return_payload = {
 			'result': result
 		}
-		return result_payload
+		return str(return_payload)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8123)
