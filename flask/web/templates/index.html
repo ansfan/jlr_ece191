@@ -21,11 +21,13 @@
 	<div class="row">
 		{% if cars_list %}
 		{% for car in cars_list %}
-		<a class="col-xs-12 col-md-4 btn btn-default btn-lg" href="/car/{{car.car_vin}}">
-			<b>Car Nickname:</b>{{ car.car_name }}<br>
-			<b>Car VIN:</b>{{ car.car_vin }}<br>
-			Last Movement: {{ car.last_entry }}
-		</a>
+		<div class="col-xs-12 col-md-4">
+			<a class="btn btn-default btn-lg index-cars" href="/car/{{car.car_vin}}">
+				<b>Car Nickname:</b> {{ car.car_name }}<br>
+				<b>Car VIN:</b> {{ car.car_vin }}<br>
+				<b>Last Movement:</b> {{ car.last_entry }}
+			</a>
+		</div>
 		{% endfor %}
 		{% else %}
 		You have no cars!

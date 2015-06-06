@@ -1,4 +1,3 @@
-
 .dropdown-submenu {
     position: relative;
 }
@@ -65,4 +64,9 @@
 
 .display-hidden {
     display: none;
+}
+
+.index-cars {
+    width: 100%;
+    margin-bottom: 20px;
 }
