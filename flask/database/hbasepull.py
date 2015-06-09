@@ -30,7 +30,7 @@ class RVIHBaseTable:
     def max_date(self, vin):
         
         try: 
-        #use vin as key for car data
+            #use vin as key for car data
             row = self.hb_table.row(vin)
             max_date = row['user:mostrecent']
             return str(max_date)
