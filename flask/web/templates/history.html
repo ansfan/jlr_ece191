@@ -108,6 +108,7 @@
 		map.setView([37, -122], 14);
 
 		{% if data %}
+		// If has data, start updating map
 		var marker = L.marker([37, -122], {
 			icon: L.mapbox.marker.icon({
 				'marker-color': '#f86767'
@@ -121,13 +122,10 @@
 
 		var list_of_data = entire_payload['payload'];
 
-		// console.log(data.length);
-
-		// console.log(JSON.parse(data[0]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"')));	
 		var i = 0;
 		window.setInterval(function() {
 			if (i < list_of_data.length) {
-				temp = JSON.parse(list_of_data[i]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"'))[0];	
+				temp = JSON.parse(list_of_data[i]['data']);	
 				console.log(temp);
 
 				for (var j=0; j < temp.length; j++) {
@@ -141,13 +139,13 @@
 						console.log('speed is ' + channel_block['value']);
 					}
 				}
-				// marker.setLatLng(L.latLng(parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])));
-				// map.setView([parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])]);
 			}
 			
 			i += 1;
 		}, 1000);
 
+		// Populate table
+		
 		{% endif %}
 	</script>
 	<!-- /Map -->
