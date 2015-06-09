@@ -49,10 +49,10 @@
 					<br><br>
 					 -->
 					<p id="datepair">
-						<input type="text" class="date start" name="start_date">
-						<input type="text" class="time start" name="start_time"> to
-						<input type="text" class="date end" name="end_date">
-						<input type="text" class="time end" name="end_time">
+						<input type="text" class="date start" name="start_date" required>
+						<input type="text" class="time start" name="start_time" required> to
+						<input type="text" class="date end" name="end_date" required>
+						<input type="text" class="time end" name="end_time" required>
 					</p>
 					<br>
 					<input type="submit" value="Submit">
@@ -76,7 +76,7 @@
 	<!-- Datepicker -->
 	<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.timepicker.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/datepair.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/Datepair.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.datepair.js') }}"></script>
 	<script>
 		// initialize input widgets first
@@ -88,7 +88,7 @@
 		$('#datepair .date').datepicker({
 			'format': 'yyyy-mm-dd',
 			'autoclose': true,
-			'endDate': Date().now()
+			'endDate': new Date()
 		});
 
 		// initialize datepair
@@ -116,21 +116,33 @@
 
 		marker.addTo(map);
 
-		var data = '{{data|tojson}}';
-		data = JSON.parse(data);
-		console.log(data);
-		data = data['payload'];
-		console.log(data);
-		console.log(data.length);
-		console.log(JSON.parse(data[0]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"')));	
+		var entire_payload = '{{data|tojson}}';
+		entire_payload = JSON.parse(entire_payload);
+
+		var list_of_data = entire_payload['payload'];
+
+		// console.log(data.length);
+
+		// console.log(JSON.parse(data[0]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"')));	
 		var i = 0;
 		window.setInterval(function() {
-			if (i < data.length) {
-				console.log(data[i]['data']);
-				temp = JSON.parse(data[i]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"'))[0];	
+			if (i < list_of_data.length) {
+				temp = JSON.parse(list_of_data[i]['data'].replace(/'/g, '"').replace(/True/g, '"True"').replace(/False/g, '"False"'))[0];	
 				console.log(temp);
-				marker.setLatLng(L.latLng(parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])));
-				map.setView([parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])]);
+
+				for (var j=0; j < temp.length; j++) {
+					channel_block = temp[j];
+					if (channel_block['channel'] == 'location') {
+						marker.setLatLng(L.latLng(parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])));
+						map.setView([parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])]);
+					} else if (channel_block['channel'] == 'track') {
+						console.log('track is ' + channel_block['value']);
+					} else if (channel_block['channel'] == 'speed') {
+						console.log('speed is ' + channel_block['value']);
+					}
+				}
+				// marker.setLatLng(L.latLng(parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])));
+				// map.setView([parseFloat(temp['value']['lat']), parseFloat(temp['value']['lon'])]);
 			}
 			
 			i += 1;
