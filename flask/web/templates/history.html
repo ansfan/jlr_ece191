@@ -51,8 +51,8 @@
 					<p id="datepair">
 						<input type="text" class="date start" name="start_date">
 						<input type="text" class="time start" name="start_time"> to
-						<input type="text" class="date end" name="end_time">
-						<input type="text" class="time end" name="end_date">
+						<input type="text" class="date end" name="end_date">
+						<input type="text" class="time end" name="end_time">
 					</p>
 					<br>
 					<input type="submit" value="Submit">
@@ -82,7 +82,7 @@
 		// initialize input widgets first
 		$('#datepair .time').timepicker({
 			'showDuration': true,
-			'timeFormat': 'g:iA'
+			'timeFormat': 'h:iA'
 		});
 
 		$('#datepair .date').datepicker({

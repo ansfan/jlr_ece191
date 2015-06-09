@@ -65,7 +65,7 @@ def pretty_date(time):
 	return str(day_diff / 365) + " years ago"
 
 def yyyymmddToEpoch(wordDate):
-	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d %-I:%M%p")))
+	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d %I:%M%p")))
 
 ################
 # Google OAuth #
