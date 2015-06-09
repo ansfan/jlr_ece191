@@ -76,7 +76,7 @@
 	<!-- Datepicker -->
 	<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.timepicker.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/datepair.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/Datepair.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.datepair.js') }}"></script>
 	<script>
 		// initialize input widgets first
@@ -88,7 +88,7 @@
 		$('#datepair .date').datepicker({
 			'format': 'yyyy-mm-dd',
 			'autoclose': true,
-			'endDate': Date().now()
+			'endDate': Date().now().format("mm-dd-yyyy")
 		});
 
 		// initialize datepair
