@@ -17,9 +17,6 @@ def jsonifyCSData(data):
 		'time' : str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(data_splitted[3]))))
 	}
 	return result
-
-def yyyymmddToEpoch(wordDate):
-	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d")))
 	
 # Import data
 # testdata = []
@@ -137,8 +134,8 @@ def history():
 		data = request.get_json()
 
 		# implement error catcher http://flask.pocoo.org/docs/0.10/patterns/apierrors/
-		start_date = str(yyyymmddToEpoch(data['start']))
-		end_date = str(yyyymmddToEpoch(data['end']))
+		start_date = str(data['start'])
+		end_date = str(data['end'])
 		car_name = data['car']
 		fat_array = hbasetable.query_by_date(car_name, start_date, end_date)
 		return str(fat_array)

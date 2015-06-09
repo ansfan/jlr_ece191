@@ -4,9 +4,10 @@
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/history.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-ui-datepicker.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-ui.structure.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-ui.theme.min.css') }}">
+	<!-- Datepicker CSS -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.timepicker.css') }}">
+	<!-- /Datepicker -->
 {% endblock %}
 
 {% block content %}
@@ -40,13 +41,19 @@
 						{% endif %}
 					</select>
 					<br>
-					Start Date:<br>
+<!-- 					Start Date:<br>
 					<input type="text" id="start_date" name="start_date">
 					<br>
 					End Date:<br>
 					<input type="text" id="end_date" name="end_date">
 					<br><br>
-					<input type="submit" value="Submit">
+					<input type="submit" value="Submit"> -->
+					<p id="datepair">
+						<input type="text" class="date start" name="start_date">
+						<input type="text" class="time start" name="start_time"> to
+						<input type="text" class="time end" name="end_date">
+						<input type="text" class="date end" name="end_time">
+					</p>
 				</form>
 
 				<p id="car_name">
@@ -65,13 +72,24 @@
 
 {% block content_js %}
 	<!-- Datepicker -->
-	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-1.11.4.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-datepicker.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.timepicker.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/datepair.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.datepair.js') }}"></script>
 	<script>
-		$( document ).ready(function() {
-			$( '#start_date' ).datepicker();
-			$( '#end_date' ).datepicker();
-		})
+		// initialize input widgets first
+		$('#datepair .time').timepicker({
+			'showDuration': true,
+			'timeFormat': 'g:ia'
+		});
+
+		$('#datepair .date').datepicker({
+			'format': 'yyyy-m-d',
+			'autoclose': true
+		});
+
+		// initialize datepair
+		$('#datepair').datepair();
 	</script>
 	<!-- /Datepicker -->
 	<!-- Map -->

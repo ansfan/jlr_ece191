@@ -63,6 +63,9 @@ def pretty_date(time):
 		return str(day_diff / 30) + " months ago"
 	return str(day_diff / 365) + " years ago"
 
+def yyyymmddToEpoch(wordDate):
+	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d")))
+
 ################
 # Google OAuth #
 ################
@@ -388,13 +391,20 @@ def history():
 
 	if request.method == 'POST':
 		start_date = request.form['start_date']
+		start_time = request.form['start_time']
 		end_date = request.form['end_date']
+		end_time = request.form['end_time']
 		car_selected = request.form['car']
+
+		print start_date
+		print start_time
+		print end_date
+		print end_time
 
 		headers = {'Content-Type': 'application/json'}
 		payload = {
-			'start' : start_date,
-			'end' : end_date,
+			'start' : yyyymmddToEpoch(start_date),
+			'end' : yyyymmddToEpoch(end_date),
 			'car' : car_selected
 		}
 
