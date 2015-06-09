@@ -6,6 +6,7 @@ import settings_client as settings
 import threading, Queue
 import logging
 import ast
+import time
 from datetime import datetime
 logging.basicConfig()
 
@@ -64,7 +65,7 @@ def pretty_date(time):
 	return str(day_diff / 365) + " years ago"
 
 def yyyymmddToEpoch(wordDate):
-	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d")))
+	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d %-I:%M%p")))
 
 ################
 # Google OAuth #
@@ -403,8 +404,8 @@ def history():
 
 		headers = {'Content-Type': 'application/json'}
 		payload = {
-			'start' : yyyymmddToEpoch(start_date),
-			'end' : yyyymmddToEpoch(end_date),
+			'start' : yyyymmddToEpoch(start_date + ' ' + start_time),
+			'end' : yyyymmddToEpoch(end_date + ' ' + end_time),
 			'car' : car_selected
 		}
 
