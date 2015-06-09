@@ -28,9 +28,9 @@ import __init__
 from util.daemon import Daemon
 from server.sotaserver import SOTACallbackServer, SOTATransmissionServer
 from server.trackingserver import TrackingCallbackServer
-from server.utils import get_settings
 from server.mqsinkserver import MQSinkServer
 from server.hbaseserver import HBaseServer
+from server.utils import get_settings
 
 from __init__ import __RVI_LOGGER__ as rvi_logger
 from __init__ import __SOTA_LOGGER__ as sota_logger
@@ -134,16 +134,13 @@ class RVIServer(Daemon):
 
         else:
             rvi_logger.info('RVI Server: Tracking not enabled')
-
-	######################################################################################
-	#############TEST CODE SECTION CHANGE TO PROPER FORMAT AFTER WORKING CONFIRM##########
-	######################################################################################
-
+        
+        # Publish to Kafka Message Queue
         if conf['TRACKING_MQ_PUBLISH'] == True:
             #log kafka configuration
             rvi_logger.info('RVI Server: Publishing to Kafka Message Queue: ' + conf['TRACKING_MQ_URL'] + ' , with topic: ' + conf['TRACKING_MQ_TOPIC'])
 
-        #Start the Kafka message queue forwarding server
+            #Start the Kafka message queue forwarding server
             try:
                 rvi_logger.info('%s: Publishing to message queue enabled.', self.__class__.__name__)
                 self.mq_sink_server = MQSinkServer(self.rvi_service_edge, conf['TRACKING_CALLBACK_URL'], conf['TRACKING_SERVICE_ID'])
@@ -156,16 +153,14 @@ class RVIServer(Daemon):
         else:
             rvi_logger.info('RVI Server: MQ Publish not enabled')
 
-        ######################################################################################
-        ###########################TEST CODE FOR HBASE########################################
-        ######################################################################################
-        
+        # Save message Queue contents into HBase
         if conf['TRACKING_MQ_HBASE'] == True:
             rvi_logger.info('RVI Server: Saving to HBase: ' + conf['TRACKING_MQ_HBASE_URL'])
-
+           
+            #Start HBase Server thread
             try:
                 rvi_logger.info('%s: Saving messages to HBase enabled.', self.__class__.__name__)
-                self.hbase_server = HBaseServer(conf['TRACKING_MQ_URL'],conf['TRACKING_MQ_TOPIC'],conf['TRACKING_MQ_HBASE_URL'], conf['TRACKING_MQ_HBASE_PORT']) 
+                self.hbase_server = HBaseServer(conf['TRACKING_MQ_URL'],conf['TRACKING_MQ_TOPIC'],conf['TRACKING_MQ_HBASE_URL'], conf['TRACKING_MQ_HBASE_PORT'], conf['TRACKING_MQ_HBASE_TABLE']) 
                 self.hbase_server.start()
                 rvi_logger.info('RVI Server: Kafka -> HBase consumer started.')
             except Exception as e:
@@ -174,7 +169,6 @@ class RVIServer(Daemon):
         else:
             rvi_logger.info('RVI Server: HBase server storage not enabled')
         
-        ###################################################################################### 
         # catch signals for proper shutdown
         for sig in (SIGABRT, SIGTERM, SIGINT):
             signal(sig, self.cleanup)
