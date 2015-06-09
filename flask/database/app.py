@@ -134,6 +134,8 @@ def history():
 		data = request.get_json()
 
 		# implement error catcher http://flask.pocoo.org/docs/0.10/patterns/apierrors/
+		print 'Start time: ' + data['start']
+		print 'End time: ' + data['end']
 		start_date = str(data['start'])
 		end_date = str(data['end'])
 		car_name = data['car']
