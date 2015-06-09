@@ -55,7 +55,7 @@ def get_settings():
         
         conf['TRACKING_MQ_HBASE']     = get_setting("RVI_TRACKING_MQ_HBASE", False)
         conf['TRACKING_MQ_HBASE_URL'] = get_setting("RVI_TRACKING_MQ_HBASE_URL", "localhost")
-        conf['TRACKING_MQ_HBASE_PORT'] = get_setting("RVI_TRACKING_MQ_HBASE_PORT", "8222")
-
+        conf['TRACKING_MQ_HBASE_PORT'] = get_setting("RVI_TRACKING_MQ_HBASE_PORT", "9090")
+        conf['TRACKING_MQ_HBASE_TABLE'] = get_setting("RVI_TRACKING_MQ_HBASE_TABLE", "rvi")
 
         return conf
