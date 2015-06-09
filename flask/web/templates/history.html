@@ -26,7 +26,6 @@
 			<div class="col-xs-3">
 				<form method="POST">
 					Car name:<br>
-					<!-- <input type="text" name="car"> -->
 					<select name="car">
 						{% if cars_list %}
 						<option value="">Please select a car</option>
@@ -39,10 +38,10 @@
 					</select>
 					<br>
 					Start Date:<br>
-					<input type="date" name="start_date">
+					<input type="text" id="start_date" name="start_date">
 					<br>
 					End Date:<br>
-					<input type="date" name="end_date">
+					<input type="text" id="end_date" name="end_date">
 					<br><br>
 					<input type="submit" value="Submit">
 				</form>
@@ -62,6 +61,17 @@
 {% endblock %}
 
 {% block content_js %}
+	<!-- Datepicker -->
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-1.11.4.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-datepicker.min.js') }}"></script>
+	<script>
+		$( document ).ready(function() {
+			$( '#start_date' ).datepicker();
+			$( '#end_date' ).datepicker();
+		})
+	</script>
+	<!-- /Datepicker -->
+	<!-- Map -->
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 
@@ -84,7 +94,7 @@
 
 		var data = '{{data|tojson}}';
 		data = JSON.parse(data);
-console.log(data);
+		console.log(data);
 		data = data['payload'];
 		console.log(data);
 		console.log(data.length);
@@ -104,4 +114,5 @@ console.log(data);
 
 		{% endif %}
 	</script>
+	<!-- /Map -->
 {% endblock %}
