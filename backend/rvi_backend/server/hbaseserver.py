@@ -2,17 +2,11 @@
 Version: 0.1
 HBase code for our RVI stuff put whatever notices, legal stuff, maintainer, etc...
 
-"""
-
-"""
 Takes messages from Kafka message queue and inserts into HBase
 For time being code is not modular... will update to create a table settings file
 for future modurization.
 
 HBase Sink which takes messages from Kafka message queue and inserts into HBase
-
-NEW NOTE: WE WILL NOT BE DIRECTLY USING HBASE NOSQL... instead we will be using 
-Apache Phoenix which is a SQL wrapper for HBASE.
 """
 
 import os, threading, base64
@@ -23,7 +17,6 @@ from rvijsonrpc import RVIJSONRPCServer
 import __init__
 from __init__ import __RVI_LOGGER__ as logger
 
-#import jaydebeapi, jpype
 import json
 from kafka import KafkaClient, SimpleConsumer
 from starbase import Connection
@@ -65,6 +58,7 @@ class HBaseServer(threading.Thread):
                 
                 self.row_key = self.vin+self.time
                 try:
+                    self.car_table.put(self.vin,{'user:mostrecent':self.time})
                     self.car_table.put(self.row_key,{'car:data':self.data})
                     self.count = self.count + 1
                     logger.info('HBase Server: key: %s, table: %s, car{data: %s}. Message number: %s', self.row_key, 'rvi', self.data, str(self.count))     
