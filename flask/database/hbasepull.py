@@ -16,7 +16,7 @@ class RVIHBaseTable:
         payload = []
         for key, data in self.hb_table.scan(row_start = start_key, row_stop = end_key):
             timestamp = key[len(vin):]
-            data['data'] = data.pop('car:data').replace("u'", "'")
+            data['data'] = data.pop('car:data').encode('ascii')
             data['vin'] = vin
             data['timestamp'] = timestamp
             payload.append(data)
