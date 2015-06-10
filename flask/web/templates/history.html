@@ -41,13 +41,6 @@
 						{% endif %}
 					</select>
 					<br>
-					<!-- Start Date:<br>
-					<input type="text" id="start_date" name="start_date">
-					<br>
-					End Date:<br>
-					<input type="text" id="end_date" name="end_date">
-					<br><br>
-					 -->
 					<p id="datepair">
 						<input type="text" class="date start" name="start_date" required>
 						<input type="text" class="time start" name="start_time" required> to
@@ -114,7 +107,7 @@
 		});
 
 		map.setView([37, -122], 14);
-
+		
 		{% if data %}
 		// If has data, start updating map
 		var marker = L.marker([37, -122], {
@@ -125,6 +118,8 @@
 
 		marker.addTo(map);
 
+		var polyline = L.polyline([]).addTo(map);
+		
 		var entire_payload = '{{data|tojson}}';
 		
 		list_of_data = JSON.parse(decodeURI(entire_payload));
@@ -135,12 +130,13 @@
 		function updatePageData() {
 			if (i < list_of_data.length) {  
                                 console.log(list_of_data[i]['data']);
-                                temp = list_of_data[i]['data']
+                                temp = list_of_data[i]['data'];
 
                                 for (var j=0; j < temp.length; j++) {
                                         channel_block = temp[j];
                                         if (channel_block['channel'] == 'location') {
                                                 marker.setLatLng(L.latLng(parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])));
+						polyline.addLatLng(L.latLng(parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])));
                                                 map.setView([parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])]);
                                         } else if (channel_block['channel'] == 'track') {
                                                 console.log('track is ' + channel_block['value']);
@@ -150,9 +146,9 @@
                                 }
                                 
                                 // Highlight the respective row on the table
-                                $("#table-history").rows[i].addClass('active').delay(950).removeClass('active');
+                                var table_row = $("#table-history")[0].rows[i+1];
+				$(table_row).addClass('active');
                                 i = i + 1;
-                                console.log(i);
                         } else {
 				clearInterval(updatePage);
 			}
