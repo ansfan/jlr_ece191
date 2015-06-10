@@ -67,6 +67,32 @@ def pretty_date(time):
 def yyyymmddToEpoch(wordDate):
 	return int(time.mktime(time.strptime(wordDate, "%Y-%m-%d %I:%M%p")))
 
+def decode_dict(item):
+	result = {}
+	for k,v in item.items():
+		k = str(k)
+		if isinstance(v, dict):
+			v = decode_dict(v)
+		else:
+			v = str(v)
+
+		result[k] = v
+
+	return result
+
+def massageUnicode(list_of_data):
+	new_datablocks = list_of_data
+
+	for data_block in new_datablocks:
+		temp_data = []	
+		for item in eval(data_block['data']):
+			item = decode_dict(item)
+			temp_data.append(item)
+
+		data_block['data'] = temp_data
+
+	return new_datablocks
+
 ################
 # Google OAuth #
 ################
@@ -390,6 +416,8 @@ def history():
 	
 	list_of_cars = parse.LoadCars(user.id)
 
+	deunicoded_data = None
+
 	if request.method == 'POST':
 		start_date = request.form['start_date']
 		start_time = request.form['start_time']
@@ -412,9 +440,16 @@ def history():
 		try:
 			print "Requesting historical data from " + start_date + " to " + end_date + " for vehicle " + car_selected
 			r = requests.post(app.config['DATABASE_HISTORY_URL'], data=json.dumps(payload), headers=headers)
-			print r.text
 
-			data = json.loads(r.text)
+			print r.json()
+			data_payload = r.json()
+			data = data_payload['payload']
+
+			print data
+
+			deunicoded_data = massageUnicode(data)
+
+			print deunicoded_data
 	
 		except Exception as e:
 			print "Error establishing connection to DB."
@@ -422,7 +457,7 @@ def history():
 			flash("Error establishing connection to DB.")
 
 	return render_template('history.html', 
-		data=data,
+		data=deunicoded_data,
 		car=vin,
 		user=user,
 		cars_list=list_of_cars)

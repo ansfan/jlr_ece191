@@ -137,17 +137,25 @@
 				try {
 					var json_data = JSON.parse(data);
 					
-					console.log('data is json: ' + json_data);
-					// console.log(json_data['data'][0]['value']['lat']);	
-					point_add(json_data['data'][0]['value']['lat'], json_data['data'][0]['value']['lon']);
-					speedTimeChart.addData([json_data['data'][0]['value']['speed']], json_data['timestamp']);
-					altitudeTimeChart.addData([json_data['data'][0]['value']['alt']], json_data['timestamp']);
-					trackingTimeChart.addData([json_data['data'][2]['value']['track']], json_data['timestamp']);
-					speed_add([json_data['data'][0]['value']['speed']]);
+					timestamp = json_data['timestamp'];
+					vin = json_data['vin'];
+					data_block = json_data['data'];
 
+					for (var i = 0; i < data_block.length; i++) {
+						channel_block = data_block[i];
+						if (channel_block['channel'] == 'location') {
+							point_add(channel_block['value']['lat'], channel_block['value']['lon']);
+							altitudeTimeChart.addData([channel_block['value']['alt']], timestamp);
+						} else if (channel_block['channel'] == 'track') {
+							trackingTimeChart.addData([channel_block['value']], timestamp);
+						} else if (channel_block['channel'] == 'speed') {
+							speed_add(channel_block['value']);
+							speedTimeChart.addData([channel_block['value']], timestamp);
+						}
+					}
 				}
 				catch(err) {
-					console.log('non-json data');
+					console.log(err);
 				}
 
 				$('#log').append('<p>' + data + '</p>');
@@ -256,38 +264,16 @@ Chart.defaults.global.responsive = true;
     <script type="text/javascript" src="{{ url_for('static', filename='js/speedometer.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/default.js') }}"></script>
     <script type="text/javascript">
-      var speedometer;
+    var speedometer;
 
-      document.addEventListener ("DOMContentLoaded", function() {
-        document.removeEventListener ("DOMContentLoaded", arguments.callee, false);
+	$(document).ready(function() {
 
-        speedometer = new Speedometer ('speedometer', {theme: 'default'});
-        speedometer.draw ();
-        function speed_add(speedJson){
-        speedometer.addEventListener ('speedometer:animateend', function () {
-          controls.start ();
-        });
-
-        var controls = new Controls (speedJson);
-        controls.start ();
-    }
-      }, false);
-  
-      function Controls (speed)
-		{
-		  var update = document.getElementById ('update');
-		  var start_update = function ()
-		  {
-		    incrementalUpdate (speed);
-		  }
-		  this.start = start_update;
-
-		}
-		function incrementalUpdate (targetSpeed)
-		{
-		  var target = targetSpeed;
-		  speedometer.animatedUpdate (target, 5000);
-
-		}
+        speedometer = new Speedometer('speedometer', {theme: 'default'});
+        speedometer.draw();
+})
+	function speed_add(speed) {
+		console.log(Math.round(speed));
+		speedometer.animatedUpdate(Math.round(speed), 1000);
+	}
     </script>
 {% endblock %}

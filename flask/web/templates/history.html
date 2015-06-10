@@ -57,16 +57,24 @@
 					<br>
 					<input type="submit" value="Submit">
 				</form>
-
-				<p id="car_name">
-					{% if car %}
-					{% endif %}
-				</p>
 				<p id="dump">
 					{% if data %}
-						{{data}}
 					{% endif %}
 				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<table id="table-history" class="table table-hover">
+					<tr>
+						<th>Time</th>
+						<th>Latitude</th>
+						<th>Longitude</th>
+						<th>Altitude</th>
+						<th>Track</th>
+						<th>Speed</th>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -118,34 +126,66 @@
 		marker.addTo(map);
 
 		var entire_payload = '{{data|tojson}}';
-		entire_payload = JSON.parse(entire_payload);
-
-		var list_of_data = entire_payload['payload'];
+		
+		list_of_data = JSON.parse(decodeURI(entire_payload));
 
 		var i = 0;
-		window.setInterval(function() {
-			if (i < list_of_data.length) {
-				temp = JSON.parse(list_of_data[i]['data']);	
-				console.log(temp);
+		var updatePage = window.setInterval(updatePageData, 1000);
 
-				for (var j=0; j < temp.length; j++) {
-					channel_block = temp[j];
-					if (channel_block['channel'] == 'location') {
-						marker.setLatLng(L.latLng(parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])));
-						map.setView([parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])]);
-					} else if (channel_block['channel'] == 'track') {
-						console.log('track is ' + channel_block['value']);
-					} else if (channel_block['channel'] == 'speed') {
-						console.log('speed is ' + channel_block['value']);
-					}
-				}
+		function updatePageData() {
+			if (i < list_of_data.length) {  
+                                console.log(list_of_data[i]['data']);
+                                temp = list_of_data[i]['data']
+
+                                for (var j=0; j < temp.length; j++) {
+                                        channel_block = temp[j];
+                                        if (channel_block['channel'] == 'location') {
+                                                marker.setLatLng(L.latLng(parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])));
+                                                map.setView([parseFloat(channel_block['value']['lat']), parseFloat(channel_block['value']['lon'])]);
+                                        } else if (channel_block['channel'] == 'track') {
+                                                console.log('track is ' + channel_block['value']);
+                                        } else if (channel_block['channel'] == 'speed') {
+                                                console.log('speed is ' + channel_block['value']);
+                                        }
+                                }
+                                
+                                // Highlight the respective row on the table
+                                $("#table-history").rows[i].addClass('active').delay(950).removeClass('active');
+                                i = i + 1;
+                                console.log(i);
+                        } else {
+				clearInterval(updatePage);
 			}
-			
-			i += 1;
-		}, 1000);
+		}
 
 		// Populate table
+		var hist_table = document.getElementById("table-history");
 		
+		for (var k = 0; k < list_of_data.length; k++) {
+			temp = list_of_data[k]['data'];
+			var row = hist_table.insertRow(-1);
+
+			for (var j = 0; j < temp.length; j++) {
+				channel_block = temp[j];
+				if (channel_block['channel'] == 'location') {
+					var cell_lat = row.insertCell(0);
+					cell_lat.innerHTML = channel_block['value']['lat'];
+
+					var cell_lon = row.insertCell(1);
+					cell_lon.innerHTML = channel_block['value']['lon'];
+
+					var cell_alt = row.insertCell(2);
+					cell_alt.innerHTML = channel_block['value']['alt'];
+				} else if (channel_block['channel'] == 'track') {
+					var cell_track = row.insertCell(3);
+					cell_track.innerHTML = channel_block['value'];
+				} else if (channel_block['channel'] == 'speed') {
+					var cell_speed = row.insertCell(4);
+					cell_speed.innerHTML = channel_block['value'];
+				}
+			}
+		}
+
 		{% endif %}
 	</script>
 	<!-- /Map -->
