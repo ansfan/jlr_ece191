@@ -53,56 +53,39 @@ body {
     float: right;
 }
 
-#gauge {
-    float:left;
-    margin-left:40px;
-    width: 334px;
-    position: relative;
-    height: 260px;
-    background: #000 url(../images/speedometer-2.png) no-repeat;
+#outer{
+  /*width: 100%;*/
+  text-align: center;
 }
 
-#needle {
-    height: 5px;
-    width: 148px;
-    background: #ff0200;
-    position: absolute;
-    bottom: 97px;
-    left: 18px;
+#speedometer {
+  height: 100%;
+  width: 100%;
+  /*margin: 0 auto;
+  display: table;
+  padding-right: 100%;*/
+  /*display: inline-block;*/
 }
 
-#numbers {
-    width: 140px;
-    height: 30px;
-    background: #191919;
-    position: absolute;
-    bottom: 10px;
-    left: 85px;
-    color: #fff;
-    font-size: 1.8em;
-    line-height: 1.34em; 
-    font-family: "Courier New", Courier, monospace;
-    padding: 0px 10px 5px;
-    border: 1px solid #292929;
+#speedometer > canvas {
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    max-height: 90%;
+}
+#inner {
+    display: inline-block;
+    height: 90%;
+    width: 50%;
+    margin: 0 auto;
 }
 
-#circle {
-    width: 79px;
-    height: 79px;
-    background: url(../images/circle-3.png)no-repeat;
-    bottom: 59px;
-    left: 127px;
-    position: absolute;
-}
+/*#speedometer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  padding-right: 100%;
+}*/
 
-#mi {
-    bottom: -25px;
-    left: 97px;
-    text-align: center;
-    position: absolute;
-    width: 140px;
-    height: 30px;
-    color: #999;
-    font-size: 1.4em;
-    font-family: "Courier New", Courier, monospace;
-}
+
