@@ -93,8 +93,12 @@
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 
-		var map = L.mapbox.map('map', 'mapbox.streets');
+		window.setTimeout(function() {
+			var map = L.mapbox.map('map', 'mapbox.streets');
 
+		$(document).ready(function() {
+			map.invalidateSize(true);
+		});
 		map.on('load', function(e) {
 			window.dispatchEvent(new Event('resize'));
 		});
@@ -173,6 +177,8 @@
 		// 	return false;
 		// });
 	});
+	
+		}, 500);
 	</script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/current_time.js') }}"></script>
 	<script>
