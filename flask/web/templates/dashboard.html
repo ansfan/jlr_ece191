@@ -268,25 +268,24 @@ Chart.defaults.global.responsive = true;
           controls.start ();
         });
 
-        var controls = new Controls ();
+        var controls = new Controls (speedJson);
         controls.start ();
     }
       }, false);
   
-      function Controls ()
+      function Controls (speed)
 		{
 		  var update = document.getElementById ('update');
-
 		  var start_update = function ()
 		  {
-		    incrementalUpdate ();
+		    incrementalUpdate (speed);
 		  }
 		  this.start = start_update;
 
 		}
-		function incrementalUpdate ()
+		function incrementalUpdate (targetSpeed)
 		{
-		  var target = speedJson;
+		  var target = targetSpeed;
 		  speedometer.animatedUpdate (target, 5000);
 
 		}
