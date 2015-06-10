@@ -22,8 +22,8 @@
 		{% endwith %}
 	</p>
 	<div class="grid-stack" data-gs-width="12">
-        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="10" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content map-container">
+		<div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="8" data-gs-height="11" data-gs-no-resize="yes">
+			<div class="grid-stack-item-content map-container">
 				<div id="map"></div>
 				<div id="map-info">
 					<div class="row">
@@ -38,52 +38,52 @@
 						</div>
 					</div>
 				</div>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-            	Unsure.
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-                Altitude Text
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="3" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-            	Speed vs. Time
-                <canvas id="speedTime"></canvas>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="7" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content" id="outer">
-            	<div id="inner">
-            	<div id="speedometer"></div>
-            </div>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="8" data-gs-y="11" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-            	Altitude vs. Time
-                <canvas id="altitudeTime"></canvas>
-            </div>
-        </div>
-        <div class="grid-stack-item" data-gs-x="0" data-gs-y="10" data-gs-width="8" data-gs-height="4" data-gs-no-resize="yes">
-            <div class="grid-stack-item-content">
-            	Tracking vs. Time
-                <canvas id="trackingTime"></canvas>
-            </div>
-        </div>
-        
-    </div>
-    <div class="scroll-top page-scroll visible-xs visble-sm">
-        <a class="btn btn-primary" href="#page-top">
-            <i class="fa fa-chevron-up"></i>
-        </a>
-    </div>
-    <div id="log"></div>
-    <p></p>
+			</div>
+		</div>
+		<div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
+			<div class="grid-stack-item-content">
+				<div id="speed-inner">
+					<p>Speed (km/h)</p>
+					<div id="speedometer"></div>
+				</div>
+			</div>
+		</div>
+		<div class="grid-stack-item" data-gs-x="10" data-gs-y="0" data-gs-width="2" data-gs-height="3" data-gs-no-resize="yes">
+			<div class="grid-stack-item-content">
+				<p>Compass</p>
+				<p id="compass">
+				</p>
+			</div>
+		</div>
+		<div class="grid-stack-item" data-gs-x="8" data-gs-y="4" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
+			<div class="grid-stack-item-content">
+				<p>Speed vs. Time</p>
+				<div id="graph-inner">
+				<canvas class="dashboard-chart" id="speedTime"></canvas>
+				</div>
+			</div>
+		</div>
+		<div class="grid-stack-item" data-gs-x="8" data-gs-y="8" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
+			<div class="grid-stack-item-content">
+				<p>Altitude vs. Time</p>
+				<canvas class="dashboard-chart" id="altitudeTime"></canvas>
+			</div>
+		</div>
+<!-- 		<div class="grid-stack-item" data-gs-x="0" data-gs-y="10" data-gs-width="8" data-gs-height="4" data-gs-no-resize="yes">
+			<div class="grid-stack-item-content">
+				Tracking vs. Time
+				<canvas id="trackingTime"></canvas>
+			</div>
+		</div> -->
+		
+	</div>
+	<div class="scroll-top page-scroll visible-xs visble-sm">
+		<a class="btn btn-primary" href="#page-top">
+			<i class="fa fa-chevron-up"></i>
+		</a>
+	</div>
+	<div id="log"></div>
+	<p></p>
 </div>
 {% endblock %}
 
@@ -129,6 +129,35 @@
 			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
 		}
 	
+		function compass_add(degree) {
+			var box = document.getElementById("compass");
+
+			if (degree >= 22.5 && degree < 67.5) {
+				//NE
+				box.innerHTML = "NE";
+			} else if (degree >= 67.5 && degree < 112.5) {
+				//E
+				box.innerHTML = "E";
+			} else if (degree >= 112.5 && degree < 157.5) {
+				//SE
+				box.innerHTML = "SE";
+			} else if (degree >= 157.5 && degree < 202.5) {
+				//S
+				box.innerHTML = "S";
+			} else if (degree >= 202.5 && degree < 247.5) {
+				//SW
+				box.innerHTML = "SW";
+			} else if (degree >= 247.5 && degree < 292.5) {
+				//W
+				box.innerHTML = "W";
+			} else if (degree >= 292.5 && degree < 337.5) {
+				//NW
+				box.innerHTML = "NW";
+			} else if ((degree >= 337.5 && degree < 360) || (degree > 0 && degree < 22.5)) {
+				//N
+				box.innerHTML = "N";
+			}
+		}
 
 	$(document).ready(function(){
 		{% if car_namespace %}
@@ -151,7 +180,9 @@
 							point_add(channel_block['value']['lat'], channel_block['value']['lon']);
 							altitudeTimeChart.addData([channel_block['value']['alt']], timestamp);
 						} else if (channel_block['channel'] == 'track') {
-							trackingTimeChart.addData([channel_block['value']], timestamp);
+							// trackingTimeChart.addData([channel_block['value']], timestamp);
+							compass_add(channel_block['value']);
+
 						} else if (channel_block['channel'] == 'speed') {
 							speed_add(channel_block['value']);
 							speedTimeChart.addData([channel_block['value']], timestamp);
@@ -188,62 +219,62 @@
 	<script src="{{ url_for('static', filename='js/gridstack.min.js') }}"></script>
 	<script type="text/javascript">
 	$(function () {
-	    $('.grid-stack').gridstack({
-	        width: 12,
-	        always_show_resize_hyesle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-	        resizable: {
-	            handles: 'e, se, s, sw, w'
-	        }
-	    });
+		$('.grid-stack').gridstack({
+			width: 12,
+			always_show_resize_hyesle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+			resizable: {
+				handles: 'e, se, s, sw, w'
+			}
+		});
 	});
 
 	var speedTimedata = {
-	    labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-	    datasets: [
-	        {
-	            label: "Speed (km/s)",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-	        }
-	    ]
+		labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+		datasets: [
+			{
+				label: "Speed (km/h)",
+				fillColor: "rgba(151,187,205,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+			}
+		]
 	};
 
 	var altitudeTimedata = {
-	    labels: [0, 1, 2, 3],
-	    datasets: [
-	        {
-	            label: "Altitude (km)",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1, 0, 1]
-	        }
-	    ]
+		labels: [0, 1, 2, 3],
+		datasets: [
+			{
+				label: "Altitude (m)",
+				fillColor: "rgba(151,187,205,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: [0, 1, 0, 1]
+			}
+		]
 	};
 
-	var trackingTimedata = {
-	    labels: [0, 1, 2, 3],
-	    datasets: [
-	        {
-	            label: "Tracking (Degrees)",
-	            fillColor: "rgba(151,187,205,0.2)",
-	            strokeColor: "rgba(220,220,220,1)",
-	            pointColor: "rgba(220,220,220,1)",
-	            pointStrokeColor: "#fff",
-	            pointHighlightFill: "#fff",
-	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [0, 1, 0, 1]
-	        }
-	    ]
-	};
+	// var trackingTimedata = {
+	// 	labels: [0, 1, 2, 3],
+	// 	datasets: [
+	// 		{
+	// 			label: "Tracking (Degrees)",
+	// 			fillColor: "rgba(151,187,205,0.2)",
+	// 			strokeColor: "rgba(220,220,220,1)",
+	// 			pointColor: "rgba(220,220,220,1)",
+	// 			pointStrokeColor: "#fff",
+	// 			pointHighlightFill: "#fff",
+	// 			pointHighlightStroke: "rgba(220,220,220,1)",
+	// 			data: [0, 1, 0, 1]
+	// 		}
+	// 	]
+	// };
 
 
 Chart.defaults.global.responsive = true;
@@ -253,33 +284,34 @@ Chart.defaults.global.responsive = true;
   var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
   var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata, {animation: false});
 
-  var trackingTimectx = document.getElementById("trackingTime").getContext("2d");
-  var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata, {animation: false});
+  // var trackingTimectx = document.getElementById("trackingTime").getContext("2d");
+  // var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata, {animation: false});
 
-  if (speedTimedata.labels.length > 20 || altitudeTimedata.length > 20 || trackingTimedata.length > 20) {
+  // if (speedTimedata.labels.length > 20 || altitudeTimedata.length > 20 || trackingTimedata.length > 20) {
+  	if (speedTimedata.labels.length > 20 || altitudeTimedata.length > 20) {
   	speedTimeChart.removeData();
   	altitudeTimeChart.removeData();
-  	trackingTimeChart.removeData();
+  	// trackingTimeChart.removeData();
   }
 
 	</script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/xcanvas.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/tbe.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/xcanvas.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/tbe.js') }}"></script>
 
-    <script type="text/javascript" src="{{ url_for('static', filename='js/digitaldisplay.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/speedometer.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/default.js') }}"></script>
-    <script type="text/javascript">
-    var speedometer;
+	<script type="text/javascript" src="{{ url_for('static', filename='js/digitaldisplay.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/speedometer.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/default.js') }}"></script>
+	<script type="text/javascript">
+	var speedometer;
 
 	$(document).ready(function() {
 
-        speedometer = new Speedometer('speedometer', {theme: 'default'});
-        speedometer.draw();
+		speedometer = new Speedometer('speedometer', {theme: 'default'});
+		speedometer.draw();
 })
 	function speed_add(speed) {
 		console.log(Math.round(speed));
 		speedometer.animatedUpdate(Math.round(speed), 1000);
 	}
-    </script>
+	</script>
 {% endblock %}
