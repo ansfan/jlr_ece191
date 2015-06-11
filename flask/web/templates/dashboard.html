@@ -99,7 +99,8 @@
 			s = (s - secs) / 60;
 			var mins = s % 60;
 			hrs = (s - mins) / 60;
-			var d = hrs % 24;
+			var d = hrs / 24;
+			hrs = hrs - (d * 24);
 
 			return d + 'days and ' + addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
 		}
@@ -180,16 +181,18 @@
 							var delta = n - d;
 							timestamp_delta.innerHTML = prettifyDelta(delta);
 
+							var utc_time = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds();
+							
 							for (var i = 0; i < data_block.length; i++) {
 								channel_block = data_block[i];
 								if (channel_block['channel'] == 'location') {
 									point_add(channel_block['value']['lat'], channel_block['value']['lon']);
-									altitudeTimeChart.addData([channel_block['value']['alt']], timestamp);
+									altitudeTimeChart.addData([channel_block['value']['alt']], utc_time);
 								} else if (channel_block['channel'] == 'track') {
 									compass_add(channel_block['value']);
 
 								} else if (channel_block['channel'] == 'speed') {
-									speedTimeChart.addData([channel_block['value']], timestamp);
+									speedTimeChart.addData([channel_block['value']], utc_time);
 									speed_add(channel_block['value']);
 								}
 							}
