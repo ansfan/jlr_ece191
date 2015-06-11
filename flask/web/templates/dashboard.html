@@ -53,11 +53,13 @@
 				<p>Compass</p>
 				<p id="compass">
 				</p>
+				<p id="compass-number">
+				</p>
 			</div>
 		</div>
 		<div class="grid-stack-item" data-gs-x="8" data-gs-y="4" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
 			<div class="grid-stack-item-content">
-				<p>Speed vs. Time</p>
+				<p>Speed vs. Time (km/h)</p>
 				<div id="graph-inner">
 				<canvas class="dashboard-chart" id="speedTime"></canvas>
 				</div>
@@ -65,7 +67,7 @@
 		</div>
 		<div class="grid-stack-item" data-gs-x="8" data-gs-y="8" data-gs-width="4" data-gs-height="4" data-gs-no-resize="yes">
 			<div class="grid-stack-item-content">
-				<p>Altitude vs. Time</p>
+				<p>Altitude vs. Time (m)</p>
 				<canvas class="dashboard-chart" id="altitudeTime"></canvas>
 			</div>
 		</div>
@@ -131,35 +133,27 @@
 	
 		function compass_add(degree) {
 			var box = document.getElementById("compass");
-
+				
 			if (degree >= 22.5 && degree < 67.5) {
-				//NE
 				box.innerHTML = "NE";
 			} else if (degree >= 67.5 && degree < 112.5) {
-				//E
 				box.innerHTML = "E";
 			} else if (degree >= 112.5 && degree < 157.5) {
-				//SE
 				box.innerHTML = "SE";
 			} else if (degree >= 157.5 && degree < 202.5) {
-				//S
 				box.innerHTML = "S";
 			} else if (degree >= 202.5 && degree < 247.5) {
-				//SW
 				box.innerHTML = "SW";
 			} else if (degree >= 247.5 && degree < 292.5) {
-				//W
 				box.innerHTML = "W";
 			} else if (degree >= 292.5 && degree < 337.5) {
-				//NW
 				box.innerHTML = "NW";
 			} else if ((degree >= 337.5 && degree < 360) || (degree > 0 && degree < 22.5)) {
-				//N
 				box.innerHTML = "N";
 			}
 		}
 
-	$(document).ready(function(){
+	$(document).ready(function() {
 		{% if car_namespace %}
 			var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
 
@@ -184,8 +178,8 @@
 							compass_add(channel_block['value']);
 
 						} else if (channel_block['channel'] == 'speed') {
-							speed_add(channel_block['value']);
 							speedTimeChart.addData([channel_block['value']], timestamp);
+							speed_add(channel_block['value']);
 						}
 					}
 				}
@@ -193,7 +187,15 @@
 					console.log(err);
 				}
 
-				$('#log').append('<p>' + data + '</p>');
+				// deleting old graph data if too many points
+				if (speedTimedata.labels.length > 20) {
+                                        speedTimeChart.removeData();
+                                }				
+
+				if (altitudeTimedata.labels.length > 20) {
+					altitudeTimeChart.removeData();
+				}
+				// $('#log').append('<p>' + data + '</p>');
 			});
 
 			// init rvi connection
@@ -229,7 +231,7 @@
 	});
 
 	var speedTimedata = {
-		labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+		labels: [],
 		datasets: [
 			{
 				label: "Speed (km/h)",
@@ -239,13 +241,13 @@
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+				data: []
 			}
 		]
 	};
 
 	var altitudeTimedata = {
-		labels: [0, 1, 2, 3],
+		labels: [],
 		datasets: [
 			{
 				label: "Altitude (m)",
@@ -255,27 +257,10 @@
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: [0, 1, 0, 1]
+				data: []
 			}
 		]
 	};
-
-	// var trackingTimedata = {
-	// 	labels: [0, 1, 2, 3],
-	// 	datasets: [
-	// 		{
-	// 			label: "Tracking (Degrees)",
-	// 			fillColor: "rgba(151,187,205,0.2)",
-	// 			strokeColor: "rgba(220,220,220,1)",
-	// 			pointColor: "rgba(220,220,220,1)",
-	// 			pointStrokeColor: "#fff",
-	// 			pointHighlightFill: "#fff",
-	// 			pointHighlightStroke: "rgba(220,220,220,1)",
-	// 			data: [0, 1, 0, 1]
-	// 		}
-	// 	]
-	// };
-
 
 Chart.defaults.global.responsive = true;
   var speedTimectx = document.getElementById("speedTime").getContext("2d");
@@ -283,16 +268,6 @@ Chart.defaults.global.responsive = true;
 
   var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
   var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata, {animation: false});
-
-  // var trackingTimectx = document.getElementById("trackingTime").getContext("2d");
-  // var trackingTimeChart = new Chart(trackingTimectx).Line(trackingTimedata, {animation: false});
-
-  // if (speedTimedata.labels.length > 20 || altitudeTimedata.length > 20 || trackingTimedata.length > 20) {
-  	if (speedTimedata.labels.length > 20 || altitudeTimedata.length > 20) {
-  	speedTimeChart.removeData();
-  	altitudeTimeChart.removeData();
-  	// trackingTimeChart.removeData();
-  }
 
 	</script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/xcanvas.js') }}"></script>
@@ -310,8 +285,7 @@ Chart.defaults.global.responsive = true;
 		speedometer.draw();
 })
 	function speed_add(speed) {
-		console.log(Math.round(speed));
-		speedometer.animatedUpdate(Math.round(speed), 1000);
+		speedometer.animatedUpdate(Math.round(speed), 250);
 	}
 	</script>
 {% endblock %}
