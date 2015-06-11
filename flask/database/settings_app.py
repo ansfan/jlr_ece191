@@ -2,10 +2,13 @@
 SECRET_KEY = 'secret!'
 
 # RVI
-DATABASE_WEBHOOK_URL = 'http://52.25.32.18:8123/webhook/'
+# The public IP of where this database web server is deployed
 FLASK_WEBHOOK_URL = 'http://52.24.215.226/webhook/'
+# Endpoint to access Apache Kafka
 RVI_KAFKA_ENDPOINT = 'master:6667'
 
 # HBase
-HBASE_IP = '172.31.17.174'
+# IP which hosts the HBase
+HBASE_IP = 'master'
+# Name of table to be accessed
 HBASE_TABLE = 'rvi'
