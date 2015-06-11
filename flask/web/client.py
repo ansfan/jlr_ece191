@@ -240,11 +240,6 @@ def test_message(message):
 	
 	emit('my response', {'data': car_name + ' requested'}, namespace=prep_carname)
 
-# @socketio.on('my broadcast event', namespace='/test')
-# def test_message2(message):
-# 	print message['data']
-# 	emit('my response', {'data': message['data']}, broadcast=True)
-
 def create_namespace(name):
 	print "Create namespace called"
 	namespace = '/' + name

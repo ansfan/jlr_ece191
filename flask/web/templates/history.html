@@ -46,6 +46,8 @@
 						<input type="text" class="time start" name="start_time" required> to
 						<input type="text" class="date end" name="end_date" required>
 						<input type="text" class="time end" name="end_time" required>
+						<br>
+						* All times in GMT
 					</p>
 					<br>
 					<input type="submit" value="Submit">
@@ -57,7 +59,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-12">
+			<div class="col-xs-12" id="table-history-container">
 				<table id="table-history" class="table table-hover">
 					<tr>
 						<th>Time</th>
@@ -162,7 +164,9 @@
 			timestamp = list_of_data[k]['timestamp'];
 			var row = hist_table.insertRow(-1);
 			var cell_time = row.insertCell(0);
-			cell_time.innerHTML = timestamp;
+			var d = new Date(0);
+			d.setUTCSeconds(parseInt(timestamp));
+			cell_time.innerHTML = d.toString();
 		
 			for (var j = 0; j < temp.length; j++) {
 				channel_block = temp[j];
