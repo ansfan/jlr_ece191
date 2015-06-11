@@ -6,6 +6,8 @@ SECRET_KEY = 'secret!'
 FLASK_WEBHOOK_URL = 'http://52.24.215.226/webhook/'
 # Endpoint to access Apache Kafka
 RVI_KAFKA_ENDPOINT = 'master:6667'
+# Kafka Topic
+RVI_KAFKA_TOPIC = 'rvi'
 
 # HBase
 # IP which hosts the HBase

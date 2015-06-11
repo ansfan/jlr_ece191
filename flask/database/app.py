@@ -75,7 +75,7 @@ def webhook():
 
 					if not rvi_thread_pool[response[0]].is_running():
 						print "Thread " + response[0] + " has stopped; restarting thread."
-						rvi_thread = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, 'rvi', response[0], settings.FLASK_WEBHOOK_URL)
+						rvi_thread = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, settings.RVI_KAFKA_TOPIC, response[0], settings.FLASK_WEBHOOK_URL)
 						rvi_thread.start()
 						rvi_thread_pool[response[0]] = rvi_thread
 
@@ -84,7 +84,7 @@ def webhook():
 					print "Sending data to: " + response_address
 					print "With data type: " + response[0]
 
-					vin1 = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, 'rvi', response[0], settings.FLASK_WEBHOOK_URL)
+					vin1 = RVIConsumer(settings.RVI_KAFKA_ENDPOINT, settings.RVI_KAFKA_TOPIC, response[0], settings.FLASK_WEBHOOK_URL)
 					vin1.start()
 
 					rvi_thread_pool[response[0]] = vin1
