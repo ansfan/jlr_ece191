@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block header %}
 	<title>History</title>
-	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
-	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+	<script src='{{ url_for('static', filename='js/mapbox-2.1.9.js') }}'></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mapbox-2.1.9.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/history.css') }}">
 	<!-- Datepicker CSS -->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-datepicker.css') }}">

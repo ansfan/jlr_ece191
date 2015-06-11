@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block header %}
 	<title>Index</title>
-	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
-	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+	<script src='{{ url_for('static', filename='js/mapbox-2.1.9.js') }}'></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/mapbox-2.1.9.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/gridstack.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
-	<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/IndieFlower.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -71,13 +71,6 @@
 				<canvas class="dashboard-chart" id="altitudeTime"></canvas>
 			</div>
 		</div>
-<!-- 		<div class="grid-stack-item" data-gs-x="0" data-gs-y="10" data-gs-width="8" data-gs-height="4" data-gs-no-resize="yes">
-			<div class="grid-stack-item-content">
-				Tracking vs. Time
-				<canvas id="trackingTime"></canvas>
-			</div>
-		</div> -->
-		
 	</div>
 	<div class="scroll-top page-scroll visible-xs visble-sm">
 		<a class="btn btn-primary" href="#page-top">
@@ -95,121 +88,105 @@
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 
+		// Must wait to load grid before charts and maps can render
 		window.setTimeout(function() {
 			var map = L.mapbox.map('map', 'mapbox.streets');
 
-		$(document).ready(function() {
-			map.invalidateSize(true);
-		});
-		map.on('load', function(e) {
-			window.dispatchEvent(new Event('resize'));
-		});
-
-		map.setView([37, -122], 14);
-
-		// Add a new line to the map with no points.
-		var polyline = L.polyline([]).addTo(map);
-
-		// Keep a tally of how many points we've added to the map.
-		var pointsAdded = 0;
-
-		// Start drawing the polyline.
-		 // add();
-
-		function point_add(car_lat, car_long) {
-			console.log('car_lat: ' + car_lat + ', car_long: ' + car_long);
-			// `addLatLng` takes a new latLng coordinate and puts it at the end of the
-			// line. You optionally pull points from your data or generate them. Here
-			// we make a sine wave with some math.
-			polyline.addLatLng(L.latLng(parseFloat(car_lat), parseFloat(car_long)));
-			console.log('added line point');
-			// Pan the map along with where the line is being added.
-			map.setView([car_lat, car_long], 14);
-			console.log('shifted map view');
-			// Continue to draw and pan the map by calling `add()`
-			// until `pointsAdded` reaches 360.
-			// if (++pointsAdded < 10000) window.setTimeout(add, 100);
-		}
-	
-		function compass_add(degree) {
-			var box = document.getElementById("compass");
-				
-			if (degree >= 22.5 && degree < 67.5) {
-				box.innerHTML = "NE";
-			} else if (degree >= 67.5 && degree < 112.5) {
-				box.innerHTML = "E";
-			} else if (degree >= 112.5 && degree < 157.5) {
-				box.innerHTML = "SE";
-			} else if (degree >= 157.5 && degree < 202.5) {
-				box.innerHTML = "S";
-			} else if (degree >= 202.5 && degree < 247.5) {
-				box.innerHTML = "SW";
-			} else if (degree >= 247.5 && degree < 292.5) {
-				box.innerHTML = "W";
-			} else if (degree >= 292.5 && degree < 337.5) {
-				box.innerHTML = "NW";
-			} else if ((degree >= 337.5 && degree < 360) || (degree > 0 && degree < 22.5)) {
-				box.innerHTML = "N";
-			}
-		}
-
-	$(document).ready(function() {
-		{% if car_namespace %}
-			var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
-
-			socket.on('my response', function(msg) {
-				data = msg.data;
-				console.log('init: ' + data);
-				
-				try {
-					var json_data = JSON.parse(data);
-					
-					timestamp = json_data['timestamp'];
-					vin = json_data['vin'];
-					data_block = json_data['data'];
-
-					for (var i = 0; i < data_block.length; i++) {
-						channel_block = data_block[i];
-						if (channel_block['channel'] == 'location') {
-							point_add(channel_block['value']['lat'], channel_block['value']['lon']);
-							altitudeTimeChart.addData([channel_block['value']['alt']], timestamp);
-						} else if (channel_block['channel'] == 'track') {
-							// trackingTimeChart.addData([channel_block['value']], timestamp);
-							compass_add(channel_block['value']);
-
-						} else if (channel_block['channel'] == 'speed') {
-							speedTimeChart.addData([channel_block['value']], timestamp);
-							speed_add(channel_block['value']);
-						}
-					}
-				}
-				catch(err) {
-					console.log(err);
-				}
-
-				// deleting old graph data if too many points
-				if (speedTimedata.labels.length > 20) {
-                                        speedTimeChart.removeData();
-                                }				
-
-				if (altitudeTimedata.labels.length > 20) {
-					altitudeTimeChart.removeData();
-				}
-				// $('#log').append('<p>' + data + '</p>');
+			$(document).ready(function() {
+				map.invalidateSize(true);
+			});
+			map.on('load', function(e) {
+				window.dispatchEvent(new Event('resize'));
 			});
 
-			// init rvi connection
-			socket.emit('car request', {data: '{{ car_namespace }}' });
-		{% endif %}
-		// $('form#emit').submit(function(event) {
-		// 	socket.emit('car request', {data: $('#emit_data').val()});
-		// 	return false;
-		// });
-		// $('form#broadcast').submit(function(event) {
-		// 	socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
-		// 	return false;
-		// });
-	});
+			map.setView([37, -122], 14);
+
+			// Add a new line to the map with no points.
+			var polyline = L.polyline([]).addTo(map);
+
+			// Keep a tally of how many points we've added to the map.
+			var pointsAdded = 0;
+
+			function point_add(car_lat, car_long) {
+				console.log('car_lat: ' + car_lat + ', car_long: ' + car_long);
+				// `addLatLng` takes a new latLng coordinate and puts it at the end of the
+				// line. You optionally pull points from your data or generate them. Here
+				// we make a sine wave with some math.
+				polyline.addLatLng(L.latLng(parseFloat(car_lat), parseFloat(car_long)));
+				console.log('added line point');
+				// Pan the map along with where the line is being added.
+				map.setView([car_lat, car_long], 14);
+			}
+		
+			function compass_add(degree) {
+				var box = document.getElementById("compass");
+					
+				if (degree >= 22.5 && degree < 67.5) {
+					box.innerHTML = "NE";
+				} else if (degree >= 67.5 && degree < 112.5) {
+					box.innerHTML = "E";
+				} else if (degree >= 112.5 && degree < 157.5) {
+					box.innerHTML = "SE";
+				} else if (degree >= 157.5 && degree < 202.5) {
+					box.innerHTML = "S";
+				} else if (degree >= 202.5 && degree < 247.5) {
+					box.innerHTML = "SW";
+				} else if (degree >= 247.5 && degree < 292.5) {
+					box.innerHTML = "W";
+				} else if (degree >= 292.5 && degree < 337.5) {
+					box.innerHTML = "NW";
+				} else if ((degree >= 337.5 && degree < 360) || (degree > 0 && degree < 22.5)) {
+					box.innerHTML = "N";
+				}
+			}
+
+			$(document).ready(function() {
+				{% if car_namespace %}
+					var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
+
+					socket.on('my response', function(msg) {
+						data = msg.data;
+						
+						try {
+							var json_data = JSON.parse(data);
+							
+							timestamp = json_data['timestamp'];
+							vin = json_data['vin'];
+							data_block = json_data['data'];
+
+							for (var i = 0; i < data_block.length; i++) {
+								channel_block = data_block[i];
+								if (channel_block['channel'] == 'location') {
+									point_add(channel_block['value']['lat'], channel_block['value']['lon']);
+									altitudeTimeChart.addData([channel_block['value']['alt']], timestamp);
+								} else if (channel_block['channel'] == 'track') {
+									compass_add(channel_block['value']);
+
+								} else if (channel_block['channel'] == 'speed') {
+									speedTimeChart.addData([channel_block['value']], timestamp);
+									speed_add(channel_block['value']);
+								}
+							}
+						}
+						catch(err) {
+							console.log(err);
+						}
+
+						// deleting old graph data if too many points
+						if (speedTimedata.labels.length > 20) {
+                            speedTimeChart.removeData();
+                        }				
+
+						if (altitudeTimedata.labels.length > 20) {
+							altitudeTimeChart.removeData();
+						}
+						// $('#log').append('<p>' + data + '</p>');
+					});
+
+					// init rvi connection
+					socket.emit('car request', {data: '{{ car_namespace }}' });
+				{% endif %}
+			});
 	
 		}, 500);
 	</script>
@@ -217,7 +194,7 @@
 	<script>
 		startTime("timestamp-current");
 	</script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+	<script src="{{ url_for('static', filename='js/lodash-3.5.0.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/gridstack.min.js') }}"></script>
 	<script type="text/javascript">
 	$(function () {
@@ -262,12 +239,13 @@
 		]
 	};
 
-Chart.defaults.global.responsive = true;
-  var speedTimectx = document.getElementById("speedTime").getContext("2d");
-  var speedTimeChart = new Chart(speedTimectx).Line(speedTimedata,{animation: false});
+	// Charts
+	Chart.defaults.global.responsive = true;
+	var speedTimectx = document.getElementById("speedTime").getContext("2d");
+	var speedTimeChart = new Chart(speedTimectx).Line(speedTimedata,{animation: false});
 
-  var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
-  var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata, {animation: false});
+	var altitudeTimectx = document.getElementById("altitudeTime").getContext("2d");
+	var altitudeTimeChart = new Chart(altitudeTimectx).Line(altitudeTimedata, {animation: false});
 
 	</script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/xcanvas.js') }}"></script>
@@ -283,7 +261,7 @@ Chart.defaults.global.responsive = true;
 
 		speedometer = new Speedometer('speedometer', {theme: 'default'});
 		speedometer.draw();
-})
+	})
 	function speed_add(speed) {
 		speedometer.animatedUpdate(Math.round(speed), 250);
 	}
