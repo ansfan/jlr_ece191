@@ -98,9 +98,10 @@
 			var secs = s % 60;
 			s = (s - secs) / 60;
 			var mins = s % 60;
-			var hrs = (s - mins) / 60;
+			hrs = (s - mins) / 60;
+			var d = hrs % 24;
 
-			return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
+			return d + 'days and ' + addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
 		}
 
 		// Must wait to load grid before charts and maps can render
