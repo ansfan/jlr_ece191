@@ -30,7 +30,7 @@ header a, header a:hover {
 
 #map { 
     width: 100%; 
-    height: 95%; 
+    height: 93%; 
     border-bottom-style: solid;
     border-radius: 1px;
     border-color: black;
@@ -38,7 +38,7 @@ header a, header a:hover {
 
 #map-info {
     width: 100%;
-    height: 5%;
+    height: 7%;
 }
 
 body {

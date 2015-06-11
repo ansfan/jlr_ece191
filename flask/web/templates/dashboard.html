@@ -102,7 +102,7 @@
 			var d = hrs / 24;
 			hrs = hrs - (d * 24);
 
-			return d + 'days and ' + addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
+			return Math.floor(d) + ' days and ' + addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
 		}
 
 		// Must wait to load grid before charts and maps can render
@@ -174,7 +174,7 @@
 							var timestamp_bar = document.getElementById("timestamp-gps");
 							var d = new Date(0);
 							d.setUTCSeconds(parseInt(timestamp));
-							timestamp_bar.innerHTML = d.toString();
+							timestamp_bar.innerHTML = d.toUTCString();
 
 							var timestamp_delta = document.getElementById("timestamp-delta");
 							var n = new Date();
