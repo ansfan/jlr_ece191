@@ -26,7 +26,7 @@ app.debug = True
 ##################
 # Flask Settings #
 ##################
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = settings.SECRET_KEY
 
 ################
 # RVI Settings #
