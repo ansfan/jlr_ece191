@@ -88,6 +88,54 @@
 	<script type="text/javascript" charset="utf-8">
 		L.mapbox.accessToken = 'pk.eyJ1IjoiYWJlbGpvaG4iLCJhIjoiam9fcDRLayJ9.pKiEuAZfLcg4NI8GBwrJfg';
 
+		function prettifyDelta(delta) {
+			function addZ(n) {
+				return (n<10? '0':'') + n;
+			}
+
+			var ms = s % 1000;
+			s = (s - ms) / 1000;
+			var secs = s % 60;
+			s = (s - secs) / 60;
+			var mins = s % 60;
+			var hrs = (s - mins) / 60;
+
+			return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs) + '.' + ms;
+		}
+
+		function point_add(car_lat, car_long) {
+			console.log('car_lat: ' + car_lat + ', car_long: ' + car_long);
+			// `addLatLng` takes a new latLng coordinate and puts it at the end of the
+			// line. You optionally pull points from your data or generate them. Here
+			// we make a sine wave with some math.
+			polyline.addLatLng(L.latLng(parseFloat(car_lat), parseFloat(car_long)));
+			console.log('added line point');
+			// Pan the map along with where the line is being added.
+			map.setView([car_lat, car_long], 14);
+		}
+	
+		function compass_add(degree) {
+			var box = document.getElementById("compass");
+				
+			if (degree >= 22.5 && degree < 67.5) {
+				box.innerHTML = "NE";
+			} else if (degree >= 67.5 && degree < 112.5) {
+				box.innerHTML = "E";
+			} else if (degree >= 112.5 && degree < 157.5) {
+				box.innerHTML = "SE";
+			} else if (degree >= 157.5 && degree < 202.5) {
+				box.innerHTML = "S";
+			} else if (degree >= 202.5 && degree < 247.5) {
+				box.innerHTML = "SW";
+			} else if (degree >= 247.5 && degree < 292.5) {
+				box.innerHTML = "W";
+			} else if (degree >= 292.5 && degree < 337.5) {
+				box.innerHTML = "NW";
+			} else if ((degree >= 337.5 && degree < 360) || (degree > 0 && degree < 22.5)) {
+				box.innerHTML = "N";
+			}
+		}
+		
 		// Must wait to load grid before charts and maps can render
 		window.setTimeout(function() {
 			var map = L.mapbox.map('map', 'mapbox.streets');
@@ -107,39 +155,6 @@
 			// Keep a tally of how many points we've added to the map.
 			var pointsAdded = 0;
 
-			function point_add(car_lat, car_long) {
-				console.log('car_lat: ' + car_lat + ', car_long: ' + car_long);
-				// `addLatLng` takes a new latLng coordinate and puts it at the end of the
-				// line. You optionally pull points from your data or generate them. Here
-				// we make a sine wave with some math.
-				polyline.addLatLng(L.latLng(parseFloat(car_lat), parseFloat(car_long)));
-				console.log('added line point');
-				// Pan the map along with where the line is being added.
-				map.setView([car_lat, car_long], 14);
-			}
-		
-			function compass_add(degree) {
-				var box = document.getElementById("compass");
-					
-				if (degree >= 22.5 && degree < 67.5) {
-					box.innerHTML = "NE";
-				} else if (degree >= 67.5 && degree < 112.5) {
-					box.innerHTML = "E";
-				} else if (degree >= 112.5 && degree < 157.5) {
-					box.innerHTML = "SE";
-				} else if (degree >= 157.5 && degree < 202.5) {
-					box.innerHTML = "S";
-				} else if (degree >= 202.5 && degree < 247.5) {
-					box.innerHTML = "SW";
-				} else if (degree >= 247.5 && degree < 292.5) {
-					box.innerHTML = "W";
-				} else if (degree >= 292.5 && degree < 337.5) {
-					box.innerHTML = "NW";
-				} else if ((degree >= 337.5 && degree < 360) || (degree > 0 && degree < 22.5)) {
-					box.innerHTML = "N";
-				}
-			}
-
 			$(document).ready(function() {
 				{% if car_namespace %}
 					var socket = io.connect('http://' + document.domain + ':' + location.port + '/{{ car_namespace }}');
@@ -153,6 +168,16 @@
 							timestamp = json_data['timestamp'];
 							vin = json_data['vin'];
 							data_block = json_data['data'];
+
+							var timestamp_bar = document.getElementById("timestamp-gps");
+							var d = new Date(0);
+							d.setUTCSeconds(parseInt(timestamp));
+							timestamp_bar.innerHTML = d.toString();
+
+							var timestamp_delta = document.getElementById("timestamp-delta");
+							var n = new Date();
+							var delta = n - d;
+							timestamp_delta.innerHTML = prettifyDelta(delta);
 
 							for (var i = 0; i < data_block.length; i++) {
 								channel_block = data_block[i];
