@@ -2,7 +2,9 @@
 SECRET_KEY = 'secret!'
 
 # RVI
+# IP of database web server
 RVI_DATABASE_URL = 'http://52.25.32.18:8123/'
+# IP of where this web server is deployed
 RVI_FLASK_WEBHOOK_URL = 'http://52.24.215.226/webhook/'
 
 # Parse
