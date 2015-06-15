@@ -162,29 +162,32 @@
 		for (var k = 0; k < list_of_data.length; k++) {
 			temp = list_of_data[k]['data'];
 			timestamp = list_of_data[k]['timestamp'];
+
 			var row = hist_table.insertRow(-1);
 			var cell_time = row.insertCell(0);
+			var cell_lat = row.insertCell(1);
+			var cell_lon = row.insertCell(2);
+			var cell_alt = row.insertCell(3);
+			var cell_track = row.insertCell(4);
+			var cell_speed = row.insertCell(5);
+
 			var d = new Date(0);
 			d.setUTCSeconds(parseInt(timestamp));
 			cell_time.innerHTML = d.toString();
-		
+
 			for (var j = 0; j < temp.length; j++) {
 				channel_block = temp[j];
 				if (channel_block['channel'] == 'location') {
-					var cell_lat = row.insertCell(1);
 					cell_lat.innerHTML = channel_block['value']['lat'];
-
-					var cell_lon = row.insertCell(2);
-					cell_lon.innerHTML = channel_block['value']['lon'];
-
-					var cell_alt = row.insertCell(3);
+					cell_lon.innerHTML = channel_block['value']['lon'];					
 					cell_alt.innerHTML = channel_block['value']['alt'];
+
 				} else if (channel_block['channel'] == 'track') {
-					var cell_track = row.insertCell(4);
 					cell_track.innerHTML = channel_block['value'];
+
 				} else if (channel_block['channel'] == 'speed') {
-					var cell_speed = row.insertCell(5);
 					cell_speed.innerHTML = channel_block['value'];
+					
 				}
 			}
 		}
